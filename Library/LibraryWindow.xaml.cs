@@ -54,30 +54,44 @@ namespace Library
 
         private void Add_Click(object sender, RoutedEventArgs e)
         {
-            DataRow row = dataTable.NewRow();
-            // Получаем имя первого столбца (ID)
-            string idColumnName = dataTable.Columns[0].ColumnName;
-            // Генерируем новый ID
-            int maxId = dataTable.AsEnumerable().Max(r => r.Field<int>(idColumnName));
-            row[idColumnName] = maxId + 1;
-            EditWindow editWindow = new EditWindow(row);
-            if (editWindow.ShowDialog() == true)
+            try
             {
-                dataTable.Rows.Add(row);
-                dataAdapter.Update(dataTable);
+                DataRow row = dataTable.NewRow();
+                // Получаем имя первого столбца (ID)
+                string idColumnName = dataTable.Columns[0].ColumnName;
+                // Генерируем новый ID
+                int maxId = dataTable.AsEnumerable().Max(r => r.Field<int>(idColumnName));
+                row[idColumnName] = maxId + 1;
+                EditWindow editWindow = new EditWindow(row);
+                if (editWindow.ShowDialog() == true)
+                {
+                    dataTable.Rows.Add(row);
+                    dataAdapter.Update(dataTable);
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Произошла ошибка: {ex.Message}");
             }
         }
 
         private void Edit_Click(object sender, RoutedEventArgs e)
         {
-            if (dataGrid.SelectedItem is DataRowView rowView)
+            try
             {
-                DataRow row = rowView.Row;
-                EditWindow editWindow = new EditWindow(row);
-                if (editWindow.ShowDialog() == true)
+                if (dataGrid.SelectedItem is DataRowView rowView)
                 {
-                    dataAdapter.Update(dataTable);
+                    DataRow row = rowView.Row;
+                    EditWindow editWindow = new EditWindow(row);
+                    if (editWindow.ShowDialog() == true)
+                    {
+                        dataAdapter.Update(dataTable);
+                    }
                 }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Произошла ошибка: {ex.Message}");
             }
         }
 

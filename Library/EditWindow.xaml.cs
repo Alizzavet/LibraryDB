@@ -43,9 +43,10 @@ namespace Library
                 else
                 {
                     TextBox textBox = new TextBox { Text = row[column].ToString() };
-                    if (column.ColumnName == "ID")
+                    textBox.ToolTip = column.ColumnName;
+                    if (column == row.Table.Columns[0])
                     {
-                        textBox.IsReadOnly = true;
+                        textBox.IsEnabled = false;
                     }
                     stackPanel.Children.Insert(stackPanel.Children.Count - 2, textBox);
                     controls.Add(column.ColumnName, textBox);
@@ -72,6 +73,11 @@ namespace Library
                 else
                 {
                     TextBox textBox = (TextBox)controls[column.ColumnName];
+                    if (string.IsNullOrWhiteSpace(textBox.Text))
+                    {
+                        MessageBox.Show($"Поле {column.ColumnName} не может быть пустым.");
+                        return;
+                    }
                     row[column] = textBox.Text;
                 }
             }
@@ -80,7 +86,7 @@ namespace Library
 
         private void btnCancel_Click(object sender, RoutedEventArgs e)
         {
-            this.DialogResult = false;
+            DialogResult = false;
         }
     }
 }
