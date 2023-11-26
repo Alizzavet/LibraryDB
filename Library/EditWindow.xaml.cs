@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Data;
+using System.Data.SqlClient;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -22,6 +23,7 @@ namespace Library
     {
         private DataRow row;
         private Dictionary<string, Control> controls = new Dictionary<string, Control>();
+        private string connectionString = "Data Source=ALIZZAVET\\ELIZAVETA;Initial Catalog=Библиотека;Integrated Security=True";
 
         public EditWindow(DataRow row)
         {
@@ -42,14 +44,40 @@ namespace Library
                 }
                 else
                 {
-                    TextBox textBox = new TextBox { Text = row[column].ToString() };
-                    textBox.ToolTip = column.ColumnName;
-                    if (column == row.Table.Columns[0])
+                    if (column.ColumnName == "LibrarianID")
                     {
-                        textBox.IsEnabled = false;
+                        ComboBox comboBoxLibrarians = new ComboBox
+                        {
+                            Name = "comboBoxLibrarians",
+                            HorizontalAlignment = HorizontalAlignment.Left,
+                            Margin = new Thickness(10, 0, 0, 10),
+                            VerticalAlignment = VerticalAlignment.Top,
+                            Width = 200
+                        };
+                        stackPanel.Children.Insert(stackPanel.Children.Count - 2, comboBoxLibrarians);
+                        FillLibrariansComboBox(comboBoxLibrarians);
+                        controls.Add(column.ColumnName, comboBoxLibrarians);
+
+                        if (int.TryParse(row[column].ToString(), out int librarianID))
+                        {
+                            comboBoxLibrarians.SelectedValue = librarianID;
+                        }
+                        else
+                        {
+                            comboBoxLibrarians.SelectedValue = null;
+                        }
                     }
-                    stackPanel.Children.Insert(stackPanel.Children.Count - 2, textBox);
-                    controls.Add(column.ColumnName, textBox);
+                    else
+                    {
+                        TextBox textBox = new TextBox { Text = row[column].ToString() };
+                        textBox.ToolTip = column.ColumnName;
+                        if (column == row.Table.Columns[0])
+                        {
+                            textBox.IsEnabled = false;
+                        }
+                        stackPanel.Children.Insert(stackPanel.Children.Count - 2, textBox);
+                        controls.Add(column.ColumnName, textBox);
+                    }
                 }
             }
         }
@@ -72,21 +100,63 @@ namespace Library
                 }
                 else
                 {
-                    TextBox textBox = (TextBox)controls[column.ColumnName];
-                    if (string.IsNullOrWhiteSpace(textBox.Text))
+                    if (controls[column.ColumnName] is TextBox textBox)
                     {
-                        MessageBox.Show($"Поле {column.ColumnName} не может быть пустым.");
-                        return;
+                        if (string.IsNullOrWhiteSpace(textBox.Text))
+                        {
+                            MessageBox.Show($"Поле {column.ColumnName} не может быть пустым.");
+                            return;
+                        }
+                        row[column] = textBox.Text;
                     }
-                    row[column] = textBox.Text;
+                    else if (controls[column.ColumnName] is ComboBox comboBox)
+                    {
+                        if (comboBox.SelectedValue != null)
+                        {
+                            KeyValuePair<int, string> selectedPair = (KeyValuePair<int, string>)comboBox.SelectedValue;
+                            row[column] = selectedPair.Key;
+                        }
+                        else
+                        {
+                            MessageBox.Show($"Поле {column.ColumnName} не может быть пустым.");
+                            return;
+                        }
+                    }
                 }
             }
             this.DialogResult = true;
         }
 
+
         private void btnCancel_Click(object sender, RoutedEventArgs e)
         {
             DialogResult = false;
+        }
+
+        private void FillLibrariansComboBox(ComboBox comboBoxLibrarians)
+        {
+            try
+            {
+                using (SqlConnection connection = new SqlConnection(connectionString))
+                {
+                    connection.Open();
+                    string query = "SELECT Users.FirstName + ' ' + Users.LastName AS LibrarianName, Librarians.LibrarianID FROM Users INNER JOIN Librarians ON Users.UserID = Librarians.UserID";
+                    using (SqlCommand command = new SqlCommand(query, connection))
+                    {
+                        using (SqlDataReader reader = command.ExecuteReader())
+                        {
+                            while (reader.Read())
+                            {
+                                comboBoxLibrarians.Items.Add(new KeyValuePair<int, string>((int)reader["LibrarianID"], reader["LibrarianName"].ToString()));
+                            }
+                        }
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Произошла ошибка при заполнении списка библиотекарей: {ex.Message}");
+            }
         }
     }
 }
