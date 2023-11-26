@@ -36,6 +36,7 @@ namespace Library
         {
             currentTable = "LibraryEvents";
             dataAdapter = dbOps.FillDataGrid($"SELECT * FROM {currentTable}", out dataTable);
+            dataTable.TableName = currentTable;
             dataGrid.ItemsSource = dataTable.DefaultView;
         }
 
@@ -43,6 +44,7 @@ namespace Library
         {
             currentTable = "Subscriptions";
             dataAdapter = dbOps.FillDataGrid($"SELECT * FROM {currentTable}", out dataTable);
+            dataTable.TableName = currentTable;
             dataGrid.ItemsSource = dataTable.DefaultView;
         }
 
@@ -50,6 +52,7 @@ namespace Library
         {
             currentTable = "LibraryRooms";
             dataAdapter = dbOps.FillDataGrid($"SELECT * FROM {currentTable}", out dataTable);
+            dataTable.TableName = currentTable;
             dataGrid.ItemsSource = dataTable.DefaultView;
         }
 
@@ -57,6 +60,7 @@ namespace Library
         {
             currentTable = "Sections";
             dataAdapter = dbOps.FillDataGrid($"SELECT * FROM {currentTable}", out dataTable);
+            dataTable.TableName = currentTable;
             dataGrid.ItemsSource = dataTable.DefaultView;
         }
 
@@ -64,6 +68,7 @@ namespace Library
         {
             currentTable = "Shelves";
             dataAdapter = dbOps.FillDataGrid($"SELECT * FROM {currentTable}", out dataTable);
+            dataTable.TableName = currentTable;
             dataGrid.ItemsSource = dataTable.DefaultView;
         }
 
@@ -73,7 +78,7 @@ namespace Library
             try
             {
                 DataRow row = dbOps.AddRow(dataTable);
-                EditWindow editWindow = new EditWindow(row);
+                EditWindow editWindow = new EditWindow(row, true); // передаем true, потому что это новая запись
                 if (editWindow.ShowDialog() == true)
                 {
                     dataTable.Rows.Add(row);
@@ -93,7 +98,7 @@ namespace Library
                 if (dataGrid.SelectedItem is DataRowView rowView)
                 {
                     DataRow row = rowView.Row;
-                    EditWindow editWindow = new EditWindow(row);
+                    EditWindow editWindow = new EditWindow(row, false); // передаем false, потому что это существующая запись
                     if (editWindow.ShowDialog() == true)
                     {
                         dbOps.UpdateRow(dataTable, dataAdapter);

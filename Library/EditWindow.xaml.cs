@@ -25,10 +25,11 @@ namespace Library
         private Dictionary<string, Control> controls = new Dictionary<string, Control>();
         private string connectionString = "Data Source=ALIZZAVET\\ELIZAVETA;Initial Catalog=Библиотека;Integrated Security=True";
 
-        public EditWindow(DataRow row)
+        public EditWindow(DataRow row, bool isNewRecord)
         {
             InitializeComponent();
             this.row = row;
+            TextBox textBox;
 
             foreach (DataColumn column in row.Table.Columns)
             {
@@ -44,66 +45,77 @@ namespace Library
                 }
                 else
                 {
-                    if (column.ColumnName == "LibrarianID")
+                    switch (column.ColumnName)
                     {
-                        ComboBox comboBoxLibrarians = new ComboBox
-                        {
-                            Name = "comboBoxLibrarians",
-                            HorizontalAlignment = HorizontalAlignment.Left,
-                            Margin = new Thickness(10, 0, 0, 10),
-                            VerticalAlignment = VerticalAlignment.Top,
-                            Width = 200
-                        };
-                        stackPanel.Children.Insert(stackPanel.Children.Count - 2, comboBoxLibrarians);
-                        FillLibrariansComboBox(comboBoxLibrarians);
-                        controls.Add(column.ColumnName, comboBoxLibrarians);
-
-                        if (int.TryParse(row[column].ToString(), out int librarianID))
-                        {
-                            comboBoxLibrarians.SelectedValue = librarianID;
-                        }
-                        else
-                        {
-                            comboBoxLibrarians.SelectedValue = null;
-                        }
-                    }
-                    else if (column.ColumnName == "LibraryRoomID")
-                    {
-                        ComboBox comboBoxLibraryRooms = new ComboBox
-                        {
-                            Name = "comboBoxLibraryRooms",
-                            HorizontalAlignment = HorizontalAlignment.Left,
-                            Margin = new Thickness(10, 0, 0, 10),
-                            VerticalAlignment = VerticalAlignment.Top,
-                            Width = 200
-                        };
-                        stackPanel.Children.Insert(stackPanel.Children.Count - 2, comboBoxLibraryRooms);
-                        FillLibraryRoomsComboBox(comboBoxLibraryRooms);
-                        controls.Add(column.ColumnName, comboBoxLibraryRooms);
-
-                        if (int.TryParse(row[column].ToString(), out int libraryRoomID))
-                        {
-                            comboBoxLibraryRooms.SelectedValue = libraryRoomID;
-                        }
-                        else
-                        {
-                            comboBoxLibraryRooms.SelectedValue = null;
-                        }
-                    }
-                    else
-                    {
-                        TextBox textBox = new TextBox { Text = row[column].ToString() };
-                        textBox.ToolTip = column.ColumnName;
-                        if (column == row.Table.Columns[0])
-                        {
-                            textBox.IsEnabled = false;
-                        }
-                        stackPanel.Children.Insert(stackPanel.Children.Count - 2, textBox);
-                        controls.Add(column.ColumnName, textBox);
+                        case "LibrarianID":
+                            if (!isNewRecord)
+                            {
+                                ComboBox comboBoxLibrarians = CreateComboBox("comboBoxLibrarians", row, column);
+                                FillLibrariansComboBox(comboBoxLibrarians);
+                            }
+                            else
+                            {
+                                textBox = CreateTextBox(row, column);
+                            }
+                            break;
+                        case "LibraryRoomID":
+                            if (row.Table.TableName == "LibraryRooms")
+                            {
+                                textBox = CreateTextBox(row, column);
+                            }
+                            else
+                            {
+                                ComboBox comboBoxLibraryRooms = CreateComboBox("comboBoxLibraryRooms", row, column);
+                                FillLibraryRoomsComboBox(comboBoxLibraryRooms);
+                            }
+                            break;
+                        default:
+                            textBox = CreateTextBox(row, column);
+                            break;
                     }
                 }
             }
         }
+
+        private ComboBox CreateComboBox(string name, DataRow row, DataColumn column)
+        {
+            ComboBox comboBox = new ComboBox
+            {
+                Name = name,
+                HorizontalAlignment = HorizontalAlignment.Left,
+                Margin = new Thickness(10, 0, 0, 10),
+                VerticalAlignment = VerticalAlignment.Top,
+                Width = 200
+            };
+            stackPanel.Children.Insert(stackPanel.Children.Count - 2, comboBox);
+            controls.Add(column.ColumnName, comboBox);
+
+            if (int.TryParse(row[column].ToString(), out int id))
+            {
+                comboBox.SelectedValue = id;
+            }
+            else
+            {
+                comboBox.SelectedValue = null;
+            }
+
+            return comboBox;
+        }
+
+        private TextBox CreateTextBox(DataRow row, DataColumn column)
+        {
+            TextBox textBox = new TextBox { Text = row[column].ToString() };
+            textBox.ToolTip = column.ColumnName;
+            if (column == row.Table.Columns[0])
+            {
+                textBox.IsEnabled = false;
+            }
+            stackPanel.Children.Insert(stackPanel.Children.Count - 2, textBox);
+            controls.Add(column.ColumnName, textBox);
+
+            return textBox;
+        }
+
 
         private void btnOK_Click(object sender, RoutedEventArgs e)
         {
