@@ -45,7 +45,29 @@ namespace Library
             dataGrid.ItemsSource = dataTable.DefaultView;
         }
 
-        // Добавьте здесь новые обработчики событий для новых таблиц администратора
+        private void btnLibraryRooms_Click(object sender, RoutedEventArgs e)
+        {
+            currentTable = "LibraryRooms";
+            dataAdapter = dbOps.FillDataGrid($"SELECT * FROM {currentTable}", out dataTable);
+            dataGrid.ItemsSource = dataTable.DefaultView;
+        }
+
+        private void btnSections_Click(object sender, RoutedEventArgs e)
+        {
+            currentTable = "Sections";
+            string query = "EXEC GetSectionsWithRoomNames";
+            dataAdapter = dbOps.FillDataGrid(query, out dataTable);
+            dataGrid.ItemsSource = dataTable.DefaultView;
+        }
+
+        private void btnShelves_Click(object sender, RoutedEventArgs e)
+        {
+            currentTable = "Shelves";
+            string query = "EXEC GetShelvesWithSectionAndRoomNames";
+            dataAdapter = dbOps.FillDataGrid(query, out dataTable);
+            dataGrid.ItemsSource = dataTable.DefaultView;
+        }
+
 
         private void Add_Click(object sender, RoutedEventArgs e)
         {

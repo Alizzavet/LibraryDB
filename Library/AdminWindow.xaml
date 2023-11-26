@@ -7,8 +7,11 @@
         mc:Ignorable="d"
         Title="AdminWindow" Height="450" Width="800">
     <Grid>
-        <Button x:Name="btnLibraryEvents" Content="Мероприятия" HorizontalAlignment="Left" Margin="10,10,0,0" VerticalAlignment="Top" Width="75" Click="btnLibraryEvents_Click"/>
-        <Button x:Name="btnSubscriptions" Content="Абонементы" HorizontalAlignment="Left" Margin="10,50,0,0" VerticalAlignment="Top" Width="75" Click="btnSubscriptions_Click"/>
+        <Button x:Name="btnLibraryEvents" Content="Мероприятия" HorizontalAlignment="Left" Margin="10,10,0,0" VerticalAlignment="Top" Width="80" Click="btnLibraryEvents_Click"/>
+        <Button x:Name="btnSubscriptions" Content="Абонементы" HorizontalAlignment="Left" Margin="10,50,0,0" VerticalAlignment="Top" Width="80" Click="btnSubscriptions_Click"/>
+        <Button x:Name="btnLibraryRooms" Content="Залы" HorizontalAlignment="Left" Margin="10,90,0,0" VerticalAlignment="Top" Width="75" Click="btnLibraryRooms_Click"/>
+        <Button x:Name="btnSections" Content="Секции" HorizontalAlignment="Left" Margin="10,130,0,0" VerticalAlignment="Top" Width="75" Click="btnSections_Click"/>
+        <Button x:Name="btnShelves" Content="Полки" HorizontalAlignment="Left" Margin="10,170,0,0" VerticalAlignment="Top" Width="75" Click="btnShelves_Click"/>
         <DataGrid x:Name="dataGrid" HorizontalAlignment="Left" Margin="100,10,0,0" VerticalAlignment="Top" Height="400" Width="675">
             <DataGrid.ContextMenu>
                 <ContextMenu>
