@@ -41,7 +41,10 @@ namespace Library
                     {
                         if (reader.Read())
                         {
-                            MessageBox.Show($"Добро пожаловать, {reader["FirstName"]} {reader["LastName"]} {reader["MiddleName"]}! Вы вошли как администратор.");
+                            MessageBox.Show($"Добро пожаловать, {reader["FirstName"]} {reader["MiddleName"]} {reader["LastName"]} ! Вы вошли как администратор.");
+                            AdminWindow adminWindow = new AdminWindow();
+                            adminWindow.Show();
+                            this.Close();
                             return;
                         }
                     }
@@ -56,7 +59,7 @@ namespace Library
                     {
                         if (reader.Read())
                         {
-                            MessageBox.Show($"Добро пожаловать, {reader["FirstName"]} {reader["LastName"]} {reader["MiddleName"]}! Вы вошли как библиотекарь.");
+                            MessageBox.Show($"Добро пожаловать, {reader["FirstName"]} {reader["MiddleName"]} {reader["LastName"]}! Вы вошли как библиотекарь.");
                             LibraryWindow libraryWindow = new LibraryWindow();
                             libraryWindow.Show();
                             this.Close();

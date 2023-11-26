@@ -17,16 +17,16 @@ using System.Windows.Shapes;
 namespace Library
 {
     /// <summary>
-    /// Логика взаимодействия для LibraryWindow.xaml
+    /// Логика взаимодействия для AdminWindow.xaml
     /// </summary>
-    public partial class LibraryWindow : Window
+    public partial class AdminWindow : Window
     {
         private DatabaseOperations dbOps = new DatabaseOperations();
         private SqlDataAdapter dataAdapter;
         private DataTable dataTable;
         private string currentTable;
 
-        public LibraryWindow()
+        public AdminWindow()
         {
             InitializeComponent();
         }
@@ -44,6 +44,8 @@ namespace Library
             dataAdapter = dbOps.FillDataGrid($"SELECT * FROM {currentTable}", out dataTable);
             dataGrid.ItemsSource = dataTable.DefaultView;
         }
+
+        // Добавьте здесь новые обработчики событий для новых таблиц администратора
 
         private void Add_Click(object sender, RoutedEventArgs e)
         {
