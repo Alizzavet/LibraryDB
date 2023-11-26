@@ -67,6 +67,29 @@ namespace Library
                             comboBoxLibrarians.SelectedValue = null;
                         }
                     }
+                    else if (column.ColumnName == "LibraryRoomID")
+                    {
+                        ComboBox comboBoxLibraryRooms = new ComboBox
+                        {
+                            Name = "comboBoxLibraryRooms",
+                            HorizontalAlignment = HorizontalAlignment.Left,
+                            Margin = new Thickness(10, 0, 0, 10),
+                            VerticalAlignment = VerticalAlignment.Top,
+                            Width = 200
+                        };
+                        stackPanel.Children.Insert(stackPanel.Children.Count - 2, comboBoxLibraryRooms);
+                        FillLibraryRoomsComboBox(comboBoxLibraryRooms);
+                        controls.Add(column.ColumnName, comboBoxLibraryRooms);
+
+                        if (int.TryParse(row[column].ToString(), out int libraryRoomID))
+                        {
+                            comboBoxLibraryRooms.SelectedValue = libraryRoomID;
+                        }
+                        else
+                        {
+                            comboBoxLibraryRooms.SelectedValue = null;
+                        }
+                    }
                     else
                     {
                         TextBox textBox = new TextBox { Text = row[column].ToString() };
@@ -158,5 +181,32 @@ namespace Library
                 MessageBox.Show($"Произошла ошибка при заполнении списка библиотекарей: {ex.Message}");
             }
         }
+
+        private void FillLibraryRoomsComboBox(ComboBox comboBoxLibraryRooms)
+        {
+            try
+            {
+                using (SqlConnection connection = new SqlConnection(connectionString))
+                {
+                    connection.Open();
+                    string query = "SELECT LibraryRoomName, LibraryRoomID FROM LibraryRooms";
+                    using (SqlCommand command = new SqlCommand(query, connection))
+                    {
+                        using (SqlDataReader reader = command.ExecuteReader())
+                        {
+                            while (reader.Read())
+                            {
+                                comboBoxLibraryRooms.Items.Add(new KeyValuePair<int, string>((int)reader["LibraryRoomID"], reader["LibraryRoomName"].ToString()));
+                            }
+                        }
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Произошла ошибка при заполнении списка залов: {ex.Message}");
+            }
+        }
+
     }
 }

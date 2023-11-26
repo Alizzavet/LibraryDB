@@ -21,7 +21,6 @@ namespace Library
             return dataAdapter;
         }
 
-
         public DataRow AddRow(DataTable dataTable)
         {
             DataRow row = dataTable.NewRow();
@@ -39,7 +38,6 @@ namespace Library
             }
             dataAdapter.Update(dataTable);
         }
-
 
         public void DeleteRow(DataRow row, DataTable dataTable, SqlDataAdapter dataAdapter)
         {

@@ -24,6 +24,7 @@ namespace Library
         private DatabaseOperations dbOps = new DatabaseOperations();
         private SqlDataAdapter dataAdapter;
         private DataTable dataTable;
+        private DataTable editDataTable;
         private string currentTable;
 
         public AdminWindow()
@@ -55,16 +56,14 @@ namespace Library
         private void btnSections_Click(object sender, RoutedEventArgs e)
         {
             currentTable = "Sections";
-            string query = "EXEC GetSectionsWithRoomNames";
-            dataAdapter = dbOps.FillDataGrid(query, out dataTable);
+            dataAdapter = dbOps.FillDataGrid($"SELECT * FROM {currentTable}", out dataTable);
             dataGrid.ItemsSource = dataTable.DefaultView;
         }
 
         private void btnShelves_Click(object sender, RoutedEventArgs e)
         {
             currentTable = "Shelves";
-            string query = "EXEC GetShelvesWithSectionAndRoomNames";
-            dataAdapter = dbOps.FillDataGrid(query, out dataTable);
+            dataAdapter = dbOps.FillDataGrid($"SELECT * FROM {currentTable}", out dataTable);
             dataGrid.ItemsSource = dataTable.DefaultView;
         }
 
