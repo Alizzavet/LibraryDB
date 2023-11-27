@@ -35,13 +35,13 @@ CREATE TABLE Users (
 
 CREATE TABLE Librarians (
     LibrarianID INT PRIMARY KEY,
-    UserID INT, FOREIGN KEY (UserID) REFERENCES Users(UserID)
+    UserID INT, FOREIGN KEY (UserID) REFERENCES Users(UserID) ON DELETE CASCADE
 );
 
 CREATE TABLE Administrators (
     AdministratorID INT PRIMARY KEY,
-    UserID INT, FOREIGN KEY (UserID) REFERENCES Users(UserID),
-    LibrarianID INT, FOREIGN KEY (LibrarianID) REFERENCES Librarians(LibrarianID) 
+    UserID INT, FOREIGN KEY (UserID) REFERENCES Users(UserID) ON DELETE CASCADE,
+    LibrarianID INT, FOREIGN KEY (LibrarianID) REFERENCES Librarians(LibrarianID) ON DELETE CASCADE 
 );
 
 CREATE TABLE LibraryEvents (
@@ -51,6 +51,16 @@ CREATE TABLE LibraryEvents (
 	EventDate DATE NOT NULL,
 	LibrarianID INT, FOREIGN KEY (LibrarianID) REFERENCES Librarians(LibrarianID) ON DELETE CASCADE
 );
+
+--------------------------------------------
+CREATE PROCEDURE DeleteFromLibraryEvents
+    @EventID INT
+AS
+BEGIN
+    -- Удаляем запись из таблицы LibraryEvents
+    DELETE FROM LibraryEvents WHERE EventID = @EventID;
+END
+----------------------------------------------
 
 CREATE TABLE Subscriptions (
 	SubscriptionID INT PRIMARY KEY,
@@ -62,43 +72,106 @@ CREATE TABLE Subscriptions (
 	SubscriptionsType VARCHAR(20)
 );
 
+----------------------------
+CREATE PROCEDURE DeleteFromSubscriptions
+    @SubscriptionID INT
+AS
+BEGIN
+    -- Удаляем запись из таблицы Subscriptions
+    DELETE FROM Subscriptions WHERE SubscriptionID = @SubscriptionID;
+END
+----------------------------------------
+
 CREATE TABLE LibraryRooms (
 	LibraryRoomID INT PRIMARY KEY,
 	LibraryRoomName NVARCHAR(50)
 );
 
-
------------------------------------------------------------------------------ ПРОЦЕДУРА ДЛЯ СЕКЦИЙ -----------------
-CREATE PROCEDURE GetSectionsWithRoomNames
+-------------------------
+CREATE PROCEDURE DeleteFromLibraryRooms
+    @LibraryRoomID INT
 AS
-SELECT Sections.SectionID, LibraryRooms.LibraryRoomName 
-FROM Sections 
-INNER JOIN LibraryRooms ON Sections.LibraryRoomID = LibraryRooms.LibraryRoomID
-GO
+BEGIN
+    -- Удаляем все связанные записи из таблицы Sections
+    DELETE FROM Sections WHERE LibraryRoomID = @LibraryRoomID;
 
-----------------------------------------------------------------------------------------------------------------------
+    -- Теперь мы можем безопасно удалить запись из таблицы LibraryRooms
+    DELETE FROM LibraryRooms WHERE LibraryRoomID = @LibraryRoomID;
+END
+-------------------------------------------
+
 
 CREATE TABLE Sections (
 	SectionID INT PRIMARY KEY,
-	LibraryRoomID INT, FOREIGN KEY (LibraryRoomID) REFERENCES LibraryRooms(LibraryRoomID)
+	LibraryRoomID INT, FOREIGN KEY (LibraryRoomID) REFERENCES LibraryRooms(LibraryRoomID) ON DELETE CASCADE
 );
 
 
---------------------------------------------------------------- ПРОЦЕДУРА ДЛЯ ПОЛОК ----------------------------------
-CREATE PROCEDURE GetShelvesWithSectionAndRoomNames
+-----------------------------------------------
+CREATE PROCEDURE GetSectionsData
 AS
-SELECT Shelves.ShelfID, Sections.SectionID, LibraryRooms.LibraryRoomName 
-FROM Shelves 
-INNER JOIN Sections ON Shelves.SectionID = Sections.SectionID 
-INNER JOIN LibraryRooms ON Sections.LibraryRoomID = LibraryRooms.LibraryRoomID
-GO
+BEGIN
+    SELECT 
+        Sections.SectionID, 
+        Sections.LibraryRoomID, 
+        LibraryRooms.LibraryRoomName 
+    FROM 
+        Sections 
+    INNER JOIN 
+        LibraryRooms ON Sections.LibraryRoomID = LibraryRooms.LibraryRoomID;
+END
 
----------------------------------------------------------------------------------------------------------------------
+
+CREATE PROCEDURE DeleteFromSections
+    @SectionID INT
+AS
+BEGIN
+    -- Удаляем все связанные записи из таблицы Shelves
+    DELETE FROM Shelves WHERE SectionID = @SectionID;
+
+    -- Теперь мы можем безопасно удалить запись из таблицы Sections
+    DELETE FROM Sections WHERE SectionID = @SectionID;
+END
+
+---------------------------------------------
+
 
 CREATE TABLE Shelves (
 	ShelfID INT PRIMARY KEY,
-	SectionID INT, FOREIGN KEY (SectionID) REFERENCES Sections(SectionID)
+	SectionID INT, FOREIGN KEY (SectionID) REFERENCES Sections(SectionID) ON DELETE CASCADE
 );
+
+
+-------------------------------------------------
+CREATE PROCEDURE GetShelvesData
+AS
+BEGIN
+    SELECT 
+        Shelves.ShelfID, 
+        Sections.SectionID, 
+        Sections.LibraryRoomID, 
+        LibraryRooms.LibraryRoomName 
+    FROM 
+        Shelves 
+    INNER JOIN 
+        Sections ON Shelves.SectionID = Sections.SectionID 
+    INNER JOIN 
+        LibraryRooms ON Sections.LibraryRoomID = LibraryRooms.LibraryRoomID;
+END
+
+
+CREATE PROCEDURE DeleteFromShelves
+    @ShelfID INT
+AS
+BEGIN
+    -- Здесь вы можете добавить код для удаления связанных записей из других таблиц, если они есть
+
+    -- Удаляем запись из таблицы Shelves
+    DELETE FROM Shelves WHERE ShelfID = @ShelfID;
+END
+
+
+-------------------------------------------------
 
 CREATE TABLE Works (
 	WorkID INT PRIMARY KEY,
@@ -572,6 +645,7 @@ SELECT * FROM MostActiveReader();
 ---------------------------------------------------------------------------------------------------------------
 
 /* ПРОЦЕДУРЫ */
+
 
 ---- Добавление нового пользователя--------
 
