@@ -23,7 +23,9 @@ namespace Library
     {
         private DatabaseOperations dbOps = new DatabaseOperations();
         private SqlDataAdapter dataAdapter;
+        private SqlDataAdapter editDataAdapter;
         private DataTable dataTable;
+        private DataTable editDataTable;
         private string currentTable;
 
         public LibraryWindow()
@@ -49,12 +51,17 @@ namespace Library
         {
             try
             {
-                DataRow row = dbOps.AddRow(dataTable);
+                DataRow row = dbOps.AddRow(editDataTable);
                 EditWindow editWindow = new EditWindow(row, true); // передаем true, потому что это новая запись
                 if (editWindow.ShowDialog() == true)
                 {
-                    dataTable.Rows.Add(row);
-                    dbOps.UpdateRow(dataTable, dataAdapter);
+                    editDataTable.Rows.Add(row);
+                    dbOps.UpdateRow(editDataTable, editDataAdapter); // Обновляем editDataTable
+                    dbOps.UpdateRow(dataTable, dataAdapter); // Обновляем dataTable
+
+                    dataAdapter = dbOps.FillDataGridForDisplay($"SELECT * FROM {currentTable}", out dataTable);
+                    dataTable.TableName = currentTable;
+                    dataGrid.ItemsSource = dataTable.DefaultView;
                 }
             }
             catch (Exception ex)
@@ -63,6 +70,7 @@ namespace Library
             }
         }
 
+
         private void Edit_Click(object sender, RoutedEventArgs e)
         {
             try
@@ -70,9 +78,12 @@ namespace Library
                 if (dataGrid.SelectedItem is DataRowView rowView)
                 {
                     DataRow row = rowView.Row;
-                    EditWindow editWindow = new EditWindow(row, false); // передаем false, потому что это существующая запись
+                    EditWindow editWindow = new EditWindow(row, false);
                     if (editWindow.ShowDialog() == true)
                     {
+                        dbOps.UpdateRow(editDataTable, editDataAdapter);
+
+                        // Обновляем реальные данные в базе данных
                         dbOps.UpdateRow(dataTable, dataAdapter);
                     }
                 }
@@ -88,9 +99,11 @@ namespace Library
             if (dataGrid.SelectedItem is DataRowView rowView)
             {
                 DataRow row = rowView.Row;
-                dbOps.DeleteRow(row, dataTable, dataAdapter);
+                int id = (int)row[0]; // Получаем ID строки здесь
+                dbOps.DeleteRow(row, editDataTable, dataAdapter, currentTable, dataGrid);
             }
         }
+
     }
 
 }

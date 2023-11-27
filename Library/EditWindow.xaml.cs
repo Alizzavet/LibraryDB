@@ -48,14 +48,14 @@ namespace Library
                     switch (column.ColumnName)
                     {
                         case "LibrarianID":
-                            if (!isNewRecord)
+                            if (row.Table.TableName == "Librarians")
                             {
-                                ComboBox comboBoxLibrarians = CreateComboBox("comboBoxLibrarians", row, column);
-                                FillLibrariansComboBox(comboBoxLibrarians);
+                                textBox = CreateTextBox(row, column);
                             }
                             else
                             {
-                                textBox = CreateTextBox(row, column);
+                                ComboBox comboBoxLibrarians = CreateComboBox("comboBoxLibrarians", row, column);
+                                FillLibrariansComboBox(comboBoxLibrarians);
                             }
                             break;
                         case "LibraryRoomID":

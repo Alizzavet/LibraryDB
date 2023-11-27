@@ -5,6 +5,8 @@ using System.Data;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows;
+using System.Windows.Controls;
 
 namespace Library
 {
@@ -32,17 +34,78 @@ namespace Library
 
         public void UpdateRow(DataTable dataTable, SqlDataAdapter dataAdapter)
         {
-            if (dataAdapter == null)
+            using (SqlCommandBuilder commandBuilder = new SqlCommandBuilder(dataAdapter))
             {
-                throw new InvalidOperationException("dataAdapter не был инициализирован.");
+                dataAdapter.UpdateCommand = commandBuilder.GetUpdateCommand();
+                dataAdapter.InsertCommand = commandBuilder.GetInsertCommand();
+                dataAdapter.DeleteCommand = commandBuilder.GetDeleteCommand();
+                dataAdapter.Update(dataTable);
             }
-            dataAdapter.Update(dataTable);
         }
 
-        public void DeleteRow(DataRow row, DataTable dataTable, SqlDataAdapter dataAdapter)
+        public void DeleteRow(DataRow row, DataTable dataTable, SqlDataAdapter dataAdapter, string currentTable, DataGrid dataGrid)
         {
-            row.Delete();
-            dataAdapter.Update(dataTable);
+            // Получаем ID строки, которую нужно удалить
+            int id = (int)row[0];
+
+            using (SqlConnection connection = new SqlConnection(connectionString))
+            {
+                connection.Open();
+
+                // Вызываем хранимую процедуру для удаления записи
+                string query = $"EXEC DeleteFrom{currentTable} {id}";
+
+                using (SqlCommand command = new SqlCommand(query, connection))
+                {
+                    command.ExecuteNonQuery();
+                }
+            }
+
+            // Обновляем DataGrid
+            if (currentTable == "Sections")
+            {
+                dataAdapter = FillDataGridForDisplay($"EXEC GetSectionsData", out dataTable);
+            }
+            else if (currentTable == "Shelves")
+            {
+                dataAdapter = FillDataGridForDisplay($"EXEC GetShelvesData", out dataTable);
+            }
+            else
+            {
+                dataAdapter = FillDataGridForDisplay($"SELECT * FROM {currentTable}", out dataTable);
+            }
+            dataTable.TableName = currentTable;
+            dataGrid.ItemsSource = dataTable.DefaultView;
+        }
+
+
+
+
+
+        public SqlDataAdapter FillDataGridFromStoredProcedure(string storedProcedureName, out DataTable dataTable)
+        {
+            using (SqlConnection connection = new SqlConnection(connectionString))
+            {
+                using (SqlCommand command = new SqlCommand(storedProcedureName, connection))
+                {
+                    command.CommandType = CommandType.StoredProcedure;
+                    SqlDataAdapter dataAdapter = new SqlDataAdapter(command);
+                    SqlCommandBuilder commandBuilder = new SqlCommandBuilder(dataAdapter);
+                    dataTable = new DataTable();
+                    dataAdapter.Fill(dataTable);
+                    return dataAdapter;
+                }
+            }
+        }
+
+        public SqlDataAdapter FillDataGridForDisplay(string selectCommand, out DataTable dataTable)
+        {
+            return FillDataGrid(selectCommand, out dataTable);
+        }
+
+        public SqlDataAdapter FillDataGridForEdit(string selectCommand, out DataTable dataTable)
+        {
+            return FillDataGrid(selectCommand, out dataTable);
         }
     }
 
