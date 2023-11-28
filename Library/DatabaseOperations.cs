@@ -20,6 +20,7 @@ namespace Library
             SqlCommandBuilder commandBuilder = new SqlCommandBuilder(dataAdapter);
             dataTable = new DataTable();
             dataAdapter.Fill(dataTable);
+            dataTable.PrimaryKey = new DataColumn[] { dataTable.Columns[0] };
             return dataAdapter;
         }
 
@@ -42,6 +43,7 @@ namespace Library
                 dataAdapter.Update(dataTable);
             }
         }
+
 
         public void DeleteRow(DataRow row, DataTable dataTable, SqlDataAdapter dataAdapter, string currentTable, DataGrid dataGrid)
         {
@@ -78,10 +80,7 @@ namespace Library
             dataGrid.ItemsSource = dataTable.DefaultView;
         }
 
-
-
-
-
+        
         public SqlDataAdapter FillDataGridFromStoredProcedure(string storedProcedureName, out DataTable dataTable)
         {
             using (SqlConnection connection = new SqlConnection(connectionString))

@@ -77,14 +77,33 @@ namespace Library
             {
                 if (dataGrid.SelectedItem is DataRowView rowView)
                 {
-                    DataRow row = rowView.Row;
-                    EditWindow editWindow = new EditWindow(row, false);
-                    if (editWindow.ShowDialog() == true)
-                    {
-                        dbOps.UpdateRow(editDataTable, editDataAdapter);
+                    DataRow selectedRow = rowView.Row;
+                    DataRow editRow = editDataTable.Rows.Find(selectedRow[0]); // Находим редактируемую строку в editDataTable
 
-                        // Обновляем реальные данные в базе данных
-                        dbOps.UpdateRow(dataTable, dataAdapter);
+                    if (editRow != null)
+                    {
+                        EditWindow editWindow = new EditWindow(editRow, false); // передаем false, потому что это существующая запись
+                        if (editWindow.ShowDialog() == true)
+                        {
+                            // Обновляем editDataTable
+                            dbOps.UpdateRow(editDataTable, editDataAdapter);
+
+                            // Обновляем dataTable и DataGrid
+                            if (currentTable == "Sections")
+                            {
+                                dataAdapter = dbOps.FillDataGridForDisplay($"EXEC GetSectionsData", out dataTable);
+                            }
+                            else if (currentTable == "Shelves")
+                            {
+                                dataAdapter = dbOps.FillDataGridForDisplay($"EXEC GetShelvesData", out dataTable);
+                            }
+                            else
+                            {
+                                dataAdapter = dbOps.FillDataGridForDisplay($"SELECT * FROM {currentTable}", out dataTable);
+                            }
+                            dataTable.TableName = currentTable;
+                            dataGrid.ItemsSource = dataTable.DefaultView;
+                        }
                     }
                 }
             }
@@ -93,6 +112,7 @@ namespace Library
                 MessageBox.Show($"Произошла ошибка: {ex.Message}");
             }
         }
+
 
         private void Delete_Click(object sender, RoutedEventArgs e)
         {
