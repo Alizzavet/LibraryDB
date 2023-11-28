@@ -23,6 +23,7 @@ DROP TABLE Administrators;
 DROP TABLE Librarians;
 DROP TABLE Users;
 DROP TABLE Subscriptions;
+DROP TABLE BooksInventorisation;
 */ 
 CREATE TABLE Users (
     UserID INT PRIMARY KEY,
@@ -41,7 +42,7 @@ CREATE TABLE Librarians (
 CREATE TABLE Administrators (
     AdministratorID INT PRIMARY KEY,
     UserID INT, FOREIGN KEY (UserID) REFERENCES Users(UserID) ON DELETE CASCADE,
-    LibrarianID INT, FOREIGN KEY (LibrarianID) REFERENCES Librarians(LibrarianID) ON DELETE CASCADE 
+    LibrarianID INT, FOREIGN KEY (LibrarianID) REFERENCES Librarians(LibrarianID)
 );
 
 CREATE TABLE LibraryEvents (
@@ -61,24 +62,6 @@ AS
 BEGIN
     -- Удаляем запись из таблицы LibraryEvents
     DELETE FROM LibraryEvents WHERE EventID = @EventID;
-END
-
-
-CREATE PROCEDURE UpdateFromLibraryEvents
-    @EventID INT,
-    @EventType NVARCHAR(50),
-    @EventName NVARCHAR(50),
-    @EventDate DATE,
-    @LibrarianID INT
-AS
-BEGIN
-    UPDATE LibraryEvents
-    SET
-        EventType = @EventType,
-        EventName = @EventName,
-        EventDate = @EventDate,
-        LibrarianID = @LibrarianID
-    WHERE EventID = @EventID;
 END
 ----------------------------------------------
 
@@ -122,9 +105,9 @@ END
 
 -------------------------------------------
 
-
 CREATE TABLE Sections (
 	SectionID INT PRIMARY KEY,
+	SectionNumber INT,
 	LibraryRoomID INT, FOREIGN KEY (LibraryRoomID) REFERENCES LibraryRooms(LibraryRoomID) ON DELETE CASCADE
 );
 
@@ -135,6 +118,7 @@ AS
 BEGIN
     SELECT 
         Sections.SectionID, 
+        Sections.SectionNumber,
         Sections.LibraryRoomID, 
         LibraryRooms.LibraryRoomName 
     FROM 
@@ -155,22 +139,12 @@ BEGIN
     DELETE FROM Sections WHERE SectionID = @SectionID;
 END
 
-CREATE PROCEDURE UpdateSections
-    @SectionID INT,
-    @LibraryRoomID INT
-AS
-BEGIN
-    UPDATE Sections
-    SET LibraryRoomID = @LibraryRoomID
-    WHERE SectionID = @SectionID;
-END
-
 
 ---------------------------------------------
 
-
 CREATE TABLE Shelves (
 	ShelfID INT PRIMARY KEY,
+	ShelfNumber INT,
 	SectionID INT, FOREIGN KEY (SectionID) REFERENCES Sections(SectionID) ON DELETE CASCADE
 );
 
@@ -181,7 +155,9 @@ AS
 BEGIN
     SELECT 
         Shelves.ShelfID, 
+        Shelves.ShelfNumber,
         Sections.SectionID, 
+        Sections.SectionNumber,
         Sections.LibraryRoomID, 
         LibraryRooms.LibraryRoomName 
     FROM 
@@ -441,11 +417,48 @@ CREATE TABLE Publishers (
 	PublisherName NVARCHAR(50) NOT NULL
 );
 
+----------------------------------------
+CREATE PROCEDURE DeleteFromPublishers
+    @PublisherID INT
+AS
+BEGIN
+    -- Удаляем запись из таблицы Publishers
+    DELETE FROM Publishers WHERE PublisherID = @PublisherID;
+END
+-----------------------------------------
+
 CREATE TABLE Books_Publishers (
 	Books_PublishersID INT PRIMARY KEY,
 	BookID INT, FOREIGN KEY (BookID) REFERENCES Books(BookID) ON DELETE CASCADE,
 	PublisherID INT, FOREIGN KEY (PublisherID) REFERENCES Publishers(PublisherID) ON DELETE CASCADE
 );
+
+-------------------------------
+CREATE PROCEDURE DeleteFromBooks_Publishers
+    @Books_PublishersID INT
+AS
+BEGIN
+    -- Удаляем запись из таблицы Books_Publishers
+    DELETE FROM Books_Publishers WHERE Books_PublishersID = @Books_PublishersID;
+END
+
+CREATE PROCEDURE GetBooks_PublishersData
+AS
+BEGIN
+    SELECT 
+        Books_Publishers.Books_PublishersID, 
+        Books_Publishers.BookID, 
+        Books.BookName,
+        Books_Publishers.PublisherID,
+        Publishers.PublisherName
+    FROM 
+        Books_Publishers 
+    INNER JOIN 
+        Books ON Books_Publishers.BookID = Books.BookID
+    INNER JOIN
+        Publishers ON Books_Publishers.PublisherID = Publishers.PublisherID;
+END
+-------------------------------------
 
 CREATE TABLE Acts (
 	ActID INT PRIMARY KEY,
@@ -455,12 +468,116 @@ CREATE TABLE Acts (
 	EventDate DATE NOT NULL
 );
 
+----------------------------------
+CREATE PROCEDURE DeleteFromActs
+    @ActID INT
+AS
+BEGIN
+    -- Удаляем все связанные записи из таблицы Acts_Books
+    DELETE FROM Acts_Books WHERE ActID = @ActID;
+
+    -- Теперь мы можем безопасно удалить запись из таблицы Acts
+    DELETE FROM Acts WHERE ActID = @ActID;
+END
+
+CREATE PROCEDURE GetActsData
+AS
+BEGIN
+    SELECT 
+        Acts.ActID, 
+        Acts.LibrarianID,
+        Users.LastName + ' ' + Users.FirstName + ' ' + Users.MiddleName AS LibrarianName,
+        Acts.SubscriptionID,
+        Subscriptions.LastName + ' ' + Subscriptions.FirstName + ' ' + Subscriptions.MiddleName AS ReaderName,
+        Acts.ActionType,
+        Acts.EventDate
+    FROM 
+        Acts 
+    INNER JOIN 
+        Librarians ON Acts.LibrarianID = Librarians.LibrarianID
+    INNER JOIN
+        Users ON Librarians.UserID = Users.UserID
+    INNER JOIN
+        Subscriptions ON Acts.SubscriptionID = Subscriptions.SubscriptionID;
+END
+
+
+------------------------------
+CREATE TABLE BooksInventorisation (
+	BookInventoryID INT PRIMARY KEY,
+	BookID INT, FOREIGN KEY (BookID) REFERENCES Books(BookID) ON DELETE CASCADE,
+	IsAvailable BIT NOT NULL,
+	CopyNumber INT NOT NULL
+);
+
+-----------------------------
+CREATE PROCEDURE DeleteFromBooksInventorisation
+    @BookInventoryID INT
+AS
+BEGIN
+    -- Удаляем запись из таблицы BookInventory
+    DELETE FROM BooksInventorisation WHERE BookInventoryID = @BookInventoryID;
+END
+
+CREATE PROCEDURE GetBooksInventorisationData
+AS
+BEGIN
+    SELECT 
+        BooksInventorisation.BookInventoryID, 
+        BooksInventorisation.BookID, 
+        Books.BookName,
+        BooksInventorisation.CopyNumber,
+        CASE 
+            WHEN BooksInventorisation.IsAvailable = 1 THEN 'В наличии'
+            ELSE 'Списана'
+        END AS Availability
+    FROM 
+        BooksInventorisation 
+    INNER JOIN 
+        Books ON BooksInventorisation.BookID = Books.BookID;
+END
+----------------------------------------
+
 CREATE TABLE Acts_Books (
 	Acts_BooksID INT PRIMARY KEY,
 	BookID INT, FOREIGN KEY (BookID) REFERENCES Books(BookID) ON DELETE CASCADE,
-	ActID INT, FOREIGN KEY (ActID) REFERENCES Acts(ActID) ON DELETE CASCADE
+	ActID INT, FOREIGN KEY (ActID) REFERENCES Acts(ActID) ON DELETE CASCADE,
+    CopyNumber INT NOT NULL
 );
 
+--------------------------------
+CREATE PROCEDURE DeleteFromActs_Books
+    @Acts_BooksID INT
+AS
+BEGIN
+    -- Удаляем запись из таблицы Acts_Books
+    DELETE FROM Acts_Books WHERE Acts_BooksID = @Acts_BooksID;
+END
+
+CREATE PROCEDURE GetActs_BooksData
+AS
+BEGIN
+    SELECT 
+        Acts_Books.Acts_BooksID, 
+        Acts_Books.BookID, 
+        Books.BookName,
+        Acts_Books.ActID,
+        Acts.ActionType,
+        Acts_Books.CopyNumber,
+        CASE 
+            WHEN BooksInventorisation.IsAvailable = 1 THEN 'В наличии'
+            ELSE 'Списана'
+        END AS Availability
+    FROM 
+        Acts_Books 
+    INNER JOIN 
+        Books ON Acts_Books.BookID = Books.BookID
+    INNER JOIN
+        Acts ON Acts_Books.ActID = Acts.ActID
+    INNER JOIN
+        BooksInventorisation ON Acts_Books.BookID = BooksInventorisation.BookID AND Acts_Books.CopyNumber = BooksInventorisation.CopyNumber;
+END
+------------------------------------
 
 /* ЗАПОЛНЕНИЕ ТАБЛИЦ */ -----------------------------------------------------------------------------------------------
 
@@ -513,24 +630,6 @@ VALUES
   (1, 'Читальный зал'),
   (2, 'Зал для выбора на дом');
 
--- Пример заполнения таблицы Sections
-INSERT INTO Sections (SectionID, LibraryRoomID)
-VALUES 
-  (1, 1),
-  (2, 1),
-  (3, 2),
-  (4, 2),
-  (5, 2);
-
--- Пример заполнения таблицы Shelves
-INSERT INTO Shelves (ShelfID, SectionID)
-VALUES 
-  (1, 1),
-  (2, 1),
-  (3, 2),
-  (4, 2),
-  (5, 4),
-  (6, 5);
 
 -- Пример заполнения таблицы Works
 INSERT INTO Works (WorkID, WorkName)

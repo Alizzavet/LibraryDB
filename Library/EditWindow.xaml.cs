@@ -124,18 +124,6 @@ namespace Library
                                 FillPublishersComboBox(comboBoxPublishers);
                             }
                             break;
-                        case "IsAvailable":
-                            if (row.Table.TableName == "Inventory")
-                            {
-                                ComboBox comboBoxIsAvailable = CreateComboBox("comboBoxIsAvailable", row, column);
-                                comboBoxIsAvailable.Items.Add(new KeyValuePair<int, string>(1, "В наличии"));
-                                comboBoxIsAvailable.Items.Add(new KeyValuePair<int, string>(0, "Списана"));
-                            }
-                            else
-                            {
-                                textBox = CreateTextBox(row, column);
-                            }
-                            break;
                         case "ActID":
                             if (row.Table.TableName == "Acts")
                             {
@@ -147,6 +135,63 @@ namespace Library
                                 FillActsComboBox(comboBoxActs);
                             }
                             break;
+                        case "ShelfID":
+                            if (row.Table.TableName == "Shelves")
+                            {
+                                textBox = CreateTextBox(row, column);
+                            }
+                            else
+                            {
+                                ComboBox comboBoxShelves = CreateComboBox("comboBoxShelves", row, column);
+                                FillShelvesComboBox(comboBoxShelves);
+                            }
+                            break;
+                        case "SectionID":
+                            if (row.Table.TableName == "Sections")
+                            {
+                                textBox = CreateTextBox(row, column);
+                            }
+                            else
+                            {
+                                ComboBox comboBoxSections = CreateComboBox("comboBoxSections", row, column);
+                                FillSectionsComboBox(comboBoxSections);
+                            }
+                            break;
+                        case "SubscriptionID":
+                            if (row.Table.TableName == "Subscriptions")
+                            {
+                                textBox = CreateTextBox(row, column);
+                            }
+                            else
+                            {
+                                ComboBox comboBoxSubscriptions = CreateComboBox("comboBoxSubscriptions", row, column);
+                                FillSubscriptionsComboBox(comboBoxSubscriptions);
+                            }
+                            break;
+                        case "IsAvailable":
+                            
+                                ComboBox comboBoxAvailability = CreateComboBox("comboBoxAvailability", row, column);
+                                FillAvailabilityComboBox(comboBoxAvailability);
+                            
+                            break;
+                        case "BookInventoryID":
+                            if (row.Table.TableName == "BooksInventorisation")
+                            {
+                                textBox = CreateTextBox(row, column);
+                            }
+                            else
+                            {
+                                ComboBox comboBoxBookInventory = CreateComboBox("comboBoxBookInventory", row, column);
+                                FillBookInventoryComboBox(comboBoxBookInventory);
+                            }
+                            break;
+                        case "ActionType":
+                            
+                                ComboBox comboBoxActionType = CreateComboBox("comboBoxActionType", row, column);
+                                FillActionTypeComboBox(comboBoxActionType);
+                            
+                            break;
+
 
                         default:
                             textBox = CreateTextBox(row, column);
@@ -455,6 +500,148 @@ namespace Library
             }
         }
 
+        private void FillShelvesComboBox(ComboBox comboBoxShelves)
+        {
+            try
+            {
+                using (SqlConnection connection = new SqlConnection(connectionString))
+                {
+                    connection.Open();
+                    string query = "SELECT Shelves.ShelfID, Shelves.ShelfNumber, Sections.SectionNumber, LibraryRooms.LibraryRoomName " +
+                                   "FROM Shelves " +
+                                   "INNER JOIN Sections ON Shelves.SectionID = Sections.SectionID " +
+                                   "INNER JOIN LibraryRooms ON Sections.LibraryRoomID = LibraryRooms.LibraryRoomID";
+                    using (SqlCommand command = new SqlCommand(query, connection))
+                    {
+                        using (SqlDataReader reader = command.ExecuteReader())
+                        {
+                            while (reader.Read())
+                            {
+                                string displayText = $"Номер полки: {reader["ShelfNumber"]}, Номер секции: {reader["SectionNumber"]} (Название зала: {reader["LibraryRoomName"]})";
+                                comboBoxShelves.Items.Add(new KeyValuePair<int, string>((int)reader["ShelfID"], displayText));
+                            }
+                        }
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Произошла ошибка при заполнении списка полок: {ex.Message}");
+            }
+        }
+
+        private void FillSectionsComboBox(ComboBox comboBoxSections)
+        {
+            try
+            {
+                using (SqlConnection connection = new SqlConnection(connectionString))
+                {
+                    connection.Open();
+                    string query = "SELECT Sections.SectionID, Sections.SectionNumber, LibraryRooms.LibraryRoomName " +
+                                   "FROM Sections " +
+                                   "INNER JOIN LibraryRooms ON Sections.LibraryRoomID = LibraryRooms.LibraryRoomID";
+                    using (SqlCommand command = new SqlCommand(query, connection))
+                    {
+                        using (SqlDataReader reader = command.ExecuteReader())
+                        {
+                            while (reader.Read())
+                            {
+                                string displayText = $"Номер секции: {reader["SectionNumber"]} (Название зала: {reader["LibraryRoomName"]})";
+                                comboBoxSections.Items.Add(new KeyValuePair<int, string>((int)reader["SectionID"], displayText));
+                            }
+                        }
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Произошла ошибка при заполнении списка секций: {ex.Message}");
+            }
+        }
+
+
+        private void FillSubscriptionsComboBox(ComboBox comboBoxSubscriptions)
+        {
+            try
+            {
+                using (SqlConnection connection = new SqlConnection(connectionString))
+                {
+                    connection.Open();
+                    string query = "SELECT SubscriptionID, LastName + ' ' + FirstName + ' ' + MiddleName AS ReaderName FROM Subscriptions";
+                    using (SqlCommand command = new SqlCommand(query, connection))
+                    {
+                        using (SqlDataReader reader = command.ExecuteReader())
+                        {
+                            while (reader.Read())
+                            {
+                                comboBoxSubscriptions.Items.Add(new KeyValuePair<int, string>((int)reader["SubscriptionID"], reader["ReaderName"].ToString()));
+                            }
+                        }
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Произошла ошибка при заполнении списка подписок: {ex.Message}");
+            }
+
+        }
+
+        private void FillAvailabilityComboBox(ComboBox comboBoxAvailability)
+        {
+            try
+            {
+                comboBoxAvailability.Items.Add(new KeyValuePair<int, string>(1, "Доступна"));
+                comboBoxAvailability.Items.Add(new KeyValuePair<int, string>(0, "Списана"));
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Произошла ошибка при заполнении списка доступности: {ex.Message}");
+            }
+        }
+
+        private void FillBookInventoryComboBox(ComboBox comboBoxBookInventory)
+        {
+            try
+            {
+                using (SqlConnection connection = new SqlConnection(connectionString))
+                {
+                    connection.Open();
+                    string query = "SELECT BooksInventorisation.BookInventoryID, Books.BookName, BooksInventorisation.CopyNumber " +
+                                   "FROM BooksInventorisation " +
+                                   "INNER JOIN Books ON BooksInventorisation.BookID = Books.BookID " +
+                                   "WHERE BooksInventorisation.IsAvailable = 1";
+                    using (SqlCommand command = new SqlCommand(query, connection))
+                    {
+                        using (SqlDataReader reader = command.ExecuteReader())
+                        {
+                            while (reader.Read())
+                            {
+                                string displayText = $"ID: {reader["BookInventoryID"]}, Книга: {reader["BookName"]}, Номер копии: {reader["CopyNumber"]}";
+                                comboBoxBookInventory.Items.Add(new KeyValuePair<int, string>((int)reader["BookInventoryID"], displayText));
+                            }
+                        }
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Произошла ошибка при заполнении списка инвентаризации книг: {ex.Message}");
+            }
+        }
+
+        private void FillActionTypeComboBox(ComboBox comboBoxActionType)
+        {
+            try
+            {
+                comboBoxActionType.Items.Add(new KeyValuePair<int, string>(1, "Взял(а)"));
+                comboBoxActionType.Items.Add(new KeyValuePair<int, string>(0, "Вернул(а)"));
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Произошла ошибка при заполнении списка типов действий: {ex.Message}");
+            }
+        }
 
     }
 }
