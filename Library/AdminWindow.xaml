@@ -12,6 +12,16 @@
         <Button x:Name="btnLibraryRooms" Content="Залы" HorizontalAlignment="Left" Margin="10,90,0,0" VerticalAlignment="Top" Width="75" Click="btnLibraryRooms_Click"/>
         <Button x:Name="btnSections" Content="Секции" HorizontalAlignment="Left" Margin="10,130,0,0" VerticalAlignment="Top" Width="75" Click="btnSections_Click"/>
         <Button x:Name="btnShelves" Content="Полки" HorizontalAlignment="Left" Margin="10,170,0,0" VerticalAlignment="Top" Width="75" Click="btnShelves_Click"/>
+        <Button x:Name="btnWorks" Content="Произведения" HorizontalAlignment="Left" Margin="10,210,0,0" VerticalAlignment="Top" Width="75" Click="btnWorks_Click"/>
+        <Button x:Name="btnBooks" Content="Книги" HorizontalAlignment="Left" Margin="10,250,0,0" VerticalAlignment="Top" Width="75" Click="btnBooks_Click"/>
+        <Button x:Name="btnWorksBooks" Content="Произведения_Книги" HorizontalAlignment="Left" Margin="10,290,0,0" VerticalAlignment="Top" Width="85" Height="35" Click="btnWorksBooks_Click">
+            <Button.ContentTemplate>
+                <DataTemplate>
+                    <TextBlock TextWrapping="Wrap" Text="{Binding Content, RelativeSource={RelativeSource Mode=TemplatedParent}}" />
+                </DataTemplate>
+            </Button.ContentTemplate>
+        </Button>
+
         <DataGrid x:Name="dataGrid" HorizontalAlignment="Left" Margin="100,10,0,0" VerticalAlignment="Top" Height="400" Width="675">
             <DataGrid.ContextMenu>
                 <ContextMenu>

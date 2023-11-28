@@ -82,6 +82,36 @@ namespace Library
             editDataTable.TableName = currentTable;
             dataGrid.ItemsSource = dataTable.DefaultView;
         }
+        private void btnWorks_Click(object sender, RoutedEventArgs e)
+        {
+            currentTable = "Works";
+            dataAdapter = dbOps.FillDataGridForDisplay($"EXEC GetWorksData", out dataTable);
+            editDataAdapter = dbOps.FillDataGridForEdit($"SELECT * FROM {currentTable}", out editDataTable);
+            dataTable.TableName = currentTable;
+            editDataTable.TableName = currentTable;
+            dataGrid.ItemsSource = dataTable.DefaultView;
+        }
+
+        private void btnBooks_Click(object sender, RoutedEventArgs e)
+        {
+            currentTable = "Books";
+            dataAdapter = dbOps.FillDataGridForDisplay($"EXEC GetBooksData", out dataTable);
+            editDataAdapter = dbOps.FillDataGridForEdit($"SELECT * FROM {currentTable}", out editDataTable);
+            dataTable.TableName = currentTable;
+            editDataTable.TableName = currentTable;
+            dataGrid.ItemsSource = dataTable.DefaultView;
+        }
+
+        private void btnWorksBooks_Click(object sender, RoutedEventArgs e)
+        {
+            currentTable = "Works_Books";
+            dataAdapter = dbOps.FillDataGridForDisplay($"EXEC GetWorks_BooksData", out dataTable);
+            editDataAdapter = dbOps.FillDataGridForEdit($"SELECT * FROM {currentTable}", out editDataTable);
+            dataTable.TableName = currentTable;
+            editDataTable.TableName = currentTable;
+            dataGrid.ItemsSource = dataTable.DefaultView;
+        }
+
 
         private void Add_Click(object sender, RoutedEventArgs e)
         {
@@ -102,6 +132,10 @@ namespace Library
                     else if (currentTable == "Shelves")
                     {
                         dataAdapter = dbOps.FillDataGridForDisplay($"EXEC GetShelvesData", out dataTable);
+                    }
+                    else if (currentTable == "Works_Books")
+                    {
+                        dataAdapter = dbOps.FillDataGridForDisplay($"EXEC GetWorks_BooksData", out dataTable);
                     }
                     else
                     {
@@ -144,6 +178,10 @@ namespace Library
                             else if (currentTable == "Shelves")
                             {
                                 dataAdapter = dbOps.FillDataGridForDisplay($"EXEC GetShelvesData", out dataTable);
+                            }
+                            else if (currentTable == "Works_Books")
+                            {
+                                dataAdapter = dbOps.FillDataGridForDisplay($"EXEC GetWorks_BooksData", out dataTable);
                             }
                             else
                             {

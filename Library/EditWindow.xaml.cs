@@ -69,6 +69,28 @@ namespace Library
                                 FillLibraryRoomsComboBox(comboBoxLibraryRooms);
                             }
                             break;
+                        case "WorkID":
+                            if (row.Table.TableName == "Works")
+                            {
+                                textBox = CreateTextBox(row, column);
+                            }
+                            else
+                            {
+                                ComboBox comboBoxWorks = CreateComboBox("comboBoxWorks", row, column);
+                                FillWorksComboBox(comboBoxWorks);
+                            }
+                            break;
+                        case "BookID":
+                            if (row.Table.TableName == "Books")
+                            {
+                                textBox = CreateTextBox(row, column);
+                            }
+                            else
+                            {
+                                ComboBox comboBoxBooks = CreateComboBox("comboBoxBooks", row, column);
+                                FillBooksComboBox(comboBoxBooks);
+                            }
+                            break;
                         default:
                             textBox = CreateTextBox(row, column);
                             break;
@@ -219,6 +241,59 @@ namespace Library
                 MessageBox.Show($"Произошла ошибка при заполнении списка залов: {ex.Message}");
             }
         }
+
+        private void FillWorksComboBox(ComboBox comboBoxWorks)
+        {
+            try
+            {
+                using (SqlConnection connection = new SqlConnection(connectionString))
+                {
+                    connection.Open();
+                    string query = "SELECT WorkID, WorkName FROM Works";
+                    using (SqlCommand command = new SqlCommand(query, connection))
+                    {
+                        using (SqlDataReader reader = command.ExecuteReader())
+                        {
+                            while (reader.Read())
+                            {
+                                comboBoxWorks.Items.Add(new KeyValuePair<int, string>((int)reader["WorkID"], reader["WorkName"].ToString()));
+                            }
+                        }
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Произошла ошибка при заполнении списка произведений: {ex.Message}");
+            }
+        }
+
+        private void FillBooksComboBox(ComboBox comboBoxBooks)
+        {
+            try
+            {
+                using (SqlConnection connection = new SqlConnection(connectionString))
+                {
+                    connection.Open();
+                    string query = "SELECT BookID, BookName FROM Books";
+                    using (SqlCommand command = new SqlCommand(query, connection))
+                    {
+                        using (SqlDataReader reader = command.ExecuteReader())
+                        {
+                            while (reader.Read())
+                            {
+                                comboBoxBooks.Items.Add(new KeyValuePair<int, string>((int)reader["BookID"], reader["BookName"].ToString()));
+                            }
+                        }
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Произошла ошибка при заполнении списка книг: {ex.Message}");
+            }
+        }
+
 
     }
 }
