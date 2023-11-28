@@ -24,6 +24,7 @@ namespace Library
         private DataRow row;
         private Dictionary<string, Control> controls = new Dictionary<string, Control>();
         private string connectionString = "Data Source=ALIZZAVET\\ELIZAVETA;Initial Catalog=Библиотека;Integrated Security=True";
+        private ComboBoxHelper comboBoxHelper = new ComboBoxHelper();
 
         public EditWindow(DataRow row, bool isNewRecord)
         {
@@ -55,7 +56,7 @@ namespace Library
                             else
                             {
                                 ComboBox comboBoxLibrarians = CreateComboBox("comboBoxLibrarians", row, column);
-                                FillLibrariansComboBox(comboBoxLibrarians);
+                                comboBoxHelper.FillLibrariansComboBox(comboBoxLibrarians);
                             }
                             break;
                         case "LibraryRoomID":
@@ -66,7 +67,7 @@ namespace Library
                             else
                             {
                                 ComboBox comboBoxLibraryRooms = CreateComboBox("comboBoxLibraryRooms", row, column);
-                                FillLibraryRoomsComboBox(comboBoxLibraryRooms);
+                                comboBoxHelper.FillLibraryRoomsComboBox(comboBoxLibraryRooms);
                             }
                             break;
                         case "WorkID":
@@ -77,7 +78,7 @@ namespace Library
                             else
                             {
                                 ComboBox comboBoxWorks = CreateComboBox("comboBoxWorks", row, column);
-                                FillWorksComboBox(comboBoxWorks);
+                                comboBoxHelper.FillWorksComboBox(comboBoxWorks);
                             }
                             break;
                         case "BookID":
@@ -88,7 +89,7 @@ namespace Library
                             else
                             {
                                 ComboBox comboBoxBooks = CreateComboBox("comboBoxBooks", row, column);
-                                FillBooksComboBox(comboBoxBooks);
+                                comboBoxHelper.FillBooksComboBox(comboBoxBooks);
                             }
                             break;
                         case "AuthorID":
@@ -99,7 +100,7 @@ namespace Library
                             else
                             {
                                 ComboBox comboBoxAuthors = CreateComboBox("comboBoxAuthors", row, column);
-                                FillAuthorsComboBox(comboBoxAuthors);
+                                comboBoxHelper.FillAuthorsComboBox(comboBoxAuthors);
                             }
                             break;
                         case "GenreID":
@@ -110,7 +111,7 @@ namespace Library
                             else
                             {
                                 ComboBox comboBoxGenres = CreateComboBox("comboBoxGenres", row, column);
-                                FillGenresComboBox(comboBoxGenres);
+                                comboBoxHelper.FillGenresComboBox(comboBoxGenres);
                             }
                             break;
                         case "PublisherID":
@@ -121,7 +122,7 @@ namespace Library
                             else
                             {
                                 ComboBox comboBoxPublishers = CreateComboBox("comboBoxPublishers", row, column);
-                                FillPublishersComboBox(comboBoxPublishers);
+                                comboBoxHelper.FillPublishersComboBox(comboBoxPublishers);
                             }
                             break;
                         case "ActID":
@@ -132,7 +133,7 @@ namespace Library
                             else
                             {
                                 ComboBox comboBoxActs = CreateComboBox("comboBoxActs", row, column);
-                                FillActsComboBox(comboBoxActs);
+                                comboBoxHelper.FillActsComboBox(comboBoxActs);
                             }
                             break;
                         case "ShelfID":
@@ -143,7 +144,7 @@ namespace Library
                             else
                             {
                                 ComboBox comboBoxShelves = CreateComboBox("comboBoxShelves", row, column);
-                                FillShelvesComboBox(comboBoxShelves);
+                                comboBoxHelper.FillShelvesComboBox(comboBoxShelves);
                             }
                             break;
                         case "SectionID":
@@ -154,7 +155,7 @@ namespace Library
                             else
                             {
                                 ComboBox comboBoxSections = CreateComboBox("comboBoxSections", row, column);
-                                FillSectionsComboBox(comboBoxSections);
+                                comboBoxHelper.FillSectionsComboBox(comboBoxSections);
                             }
                             break;
                         case "SubscriptionID":
@@ -165,13 +166,13 @@ namespace Library
                             else
                             {
                                 ComboBox comboBoxSubscriptions = CreateComboBox("comboBoxSubscriptions", row, column);
-                                FillSubscriptionsComboBox(comboBoxSubscriptions);
+                                comboBoxHelper.FillSubscriptionsComboBox(comboBoxSubscriptions);
                             }
                             break;
                         case "IsAvailable":
                             
                                 ComboBox comboBoxAvailability = CreateComboBox("comboBoxAvailability", row, column);
-                                FillAvailabilityComboBox(comboBoxAvailability);
+                                comboBoxHelper.FillAvailabilityComboBox(comboBoxAvailability);
                             
                             break;
                         case "BookInventoryID":
@@ -182,13 +183,13 @@ namespace Library
                             else
                             {
                                 ComboBox comboBoxBookInventory = CreateComboBox("comboBoxBookInventory", row, column);
-                                FillBookInventoryComboBox(comboBoxBookInventory);
+                                comboBoxHelper.FillBookInventoryComboBox(comboBoxBookInventory);
                             }
                             break;
                         case "ActionType":
                             
                                 ComboBox comboBoxActionType = CreateComboBox("comboBoxActionType", row, column);
-                                FillActionTypeComboBox(comboBoxActionType);
+                                comboBoxHelper.FillActionTypeComboBox(comboBoxActionType);
                             
                             break;
 
@@ -290,357 +291,6 @@ namespace Library
         private void btnCancel_Click(object sender, RoutedEventArgs e)
         {
             DialogResult = false;
-        }
-
-        private void FillLibrariansComboBox(ComboBox comboBoxLibrarians)
-        {
-            try
-            {
-                using (SqlConnection connection = new SqlConnection(connectionString))
-                {
-                    connection.Open();
-                    string query = "SELECT Users.FirstName + ' ' + Users.LastName AS LibrarianName, Librarians.LibrarianID FROM Users INNER JOIN Librarians ON Users.UserID = Librarians.UserID";
-                    using (SqlCommand command = new SqlCommand(query, connection))
-                    {
-                        using (SqlDataReader reader = command.ExecuteReader())
-                        {
-                            while (reader.Read())
-                            {
-                                comboBoxLibrarians.Items.Add(new KeyValuePair<int, string>((int)reader["LibrarianID"], reader["LibrarianName"].ToString()));
-                            }
-                        }
-                    }
-                }
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show($"Произошла ошибка при заполнении списка библиотекарей: {ex.Message}");
-            }
-        }
-
-        private void FillLibraryRoomsComboBox(ComboBox comboBoxLibraryRooms)
-        {
-            try
-            {
-                using (SqlConnection connection = new SqlConnection(connectionString))
-                {
-                    connection.Open();
-                    string query = "SELECT LibraryRoomName, LibraryRoomID FROM LibraryRooms";
-                    using (SqlCommand command = new SqlCommand(query, connection))
-                    {
-                        using (SqlDataReader reader = command.ExecuteReader())
-                        {
-                            while (reader.Read())
-                            {
-                                comboBoxLibraryRooms.Items.Add(new KeyValuePair<int, string>((int)reader["LibraryRoomID"], reader["LibraryRoomName"].ToString()));
-                            }
-                        }
-                    }
-                }
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show($"Произошла ошибка при заполнении списка залов: {ex.Message}");
-            }
-        }
-
-        private void FillWorksComboBox(ComboBox comboBoxWorks)
-        {
-            try
-            {
-                using (SqlConnection connection = new SqlConnection(connectionString))
-                {
-                    connection.Open();
-                    string query = "SELECT WorkID, WorkName FROM Works";
-                    using (SqlCommand command = new SqlCommand(query, connection))
-                    {
-                        using (SqlDataReader reader = command.ExecuteReader())
-                        {
-                            while (reader.Read())
-                            {
-                                comboBoxWorks.Items.Add(new KeyValuePair<int, string>((int)reader["WorkID"], reader["WorkName"].ToString()));
-                            }
-                        }
-                    }
-                }
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show($"Произошла ошибка при заполнении списка произведений: {ex.Message}");
-            }
-        }
-
-        private void FillBooksComboBox(ComboBox comboBoxBooks)
-        {
-            try
-            {
-                using (SqlConnection connection = new SqlConnection(connectionString))
-                {
-                    connection.Open();
-                    string query = "SELECT BookID, BookName FROM Books";
-                    using (SqlCommand command = new SqlCommand(query, connection))
-                    {
-                        using (SqlDataReader reader = command.ExecuteReader())
-                        {
-                            while (reader.Read())
-                            {
-                                comboBoxBooks.Items.Add(new KeyValuePair<int, string>((int)reader["BookID"], reader["BookName"].ToString()));
-                            }
-                        }
-                    }
-                }
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show($"Произошла ошибка при заполнении списка книг: {ex.Message}");
-            }
-        }
-
-        private void FillGenresComboBox(ComboBox comboBoxGenres)
-        {
-            try
-            {
-                using (SqlConnection connection = new SqlConnection(connectionString))
-                {
-                    connection.Open();
-                    string query = "SELECT GenreName, GenreID FROM Genres";
-                    using (SqlCommand command = new SqlCommand(query, connection))
-                    {
-                        using (SqlDataReader reader = command.ExecuteReader())
-                        {
-                            while (reader.Read())
-                            {
-                                comboBoxGenres.Items.Add(new KeyValuePair<int, string>((int)reader["GenreID"], reader["GenreName"].ToString()));
-                            }
-                        }
-                    }
-                }
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show($"Произошла ошибка при заполнении списка жанров: {ex.Message}");
-            }
-        }
-
-        private void FillAuthorsComboBox(ComboBox comboBoxAuthors)
-        {
-            try
-            {
-                using (SqlConnection connection = new SqlConnection(connectionString))
-                {
-                    connection.Open();
-                    string query = "SELECT LastName + ' ' + FirstName + ' ' + MiddleName AS AuthorName, AuthorID FROM Authors";
-                    using (SqlCommand command = new SqlCommand(query, connection))
-                    {
-                        using (SqlDataReader reader = command.ExecuteReader())
-                        {
-                            while (reader.Read())
-                            {
-                                comboBoxAuthors.Items.Add(new KeyValuePair<int, string>((int)reader["AuthorID"], reader["AuthorName"].ToString()));
-                            }
-                        }
-                    }
-                }
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show($"Произошла ошибка при заполнении списка авторов: {ex.Message}");
-            }
-        }
-
-        private void FillPublishersComboBox(ComboBox comboBoxPublishers)
-        {
-            try
-            {
-                using (SqlConnection connection = new SqlConnection(connectionString))
-                {
-                    connection.Open();
-                    string query = "SELECT PublisherName, PublisherID FROM Publishers";
-                    using (SqlCommand command = new SqlCommand(query, connection))
-                    {
-                        using (SqlDataReader reader = command.ExecuteReader())
-                        {
-                            while (reader.Read())
-                            {
-                                comboBoxPublishers.Items.Add(new KeyValuePair<int, string>((int)reader["PublisherID"], reader["PublisherName"].ToString()));
-                            }
-                        }
-                    }
-                }
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show($"Произошла ошибка при заполнении списка издателей: {ex.Message}");
-            }
-        }
-
-        private void FillActsComboBox(ComboBox comboBoxActs)
-        {
-            try
-            {
-                using (SqlConnection connection = new SqlConnection(connectionString))
-                {
-                    connection.Open();
-                    string query = "SELECT ActID FROM Acts";
-                    using (SqlCommand command = new SqlCommand(query, connection))
-                    {
-                        using (SqlDataReader reader = command.ExecuteReader())
-                        {
-                            while (reader.Read())
-                            {
-                                comboBoxActs.Items.Add(new KeyValuePair<int, string>((int)reader["ActID"], reader["ActID"].ToString()));
-                            }
-                        }
-                    }
-                }
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show($"Произошла ошибка при заполнении списка актов: {ex.Message}");
-            }
-        }
-
-        private void FillShelvesComboBox(ComboBox comboBoxShelves)
-        {
-            try
-            {
-                using (SqlConnection connection = new SqlConnection(connectionString))
-                {
-                    connection.Open();
-                    string query = "SELECT Shelves.ShelfID, Shelves.ShelfNumber, Sections.SectionNumber, LibraryRooms.LibraryRoomName " +
-                                   "FROM Shelves " +
-                                   "INNER JOIN Sections ON Shelves.SectionID = Sections.SectionID " +
-                                   "INNER JOIN LibraryRooms ON Sections.LibraryRoomID = LibraryRooms.LibraryRoomID";
-                    using (SqlCommand command = new SqlCommand(query, connection))
-                    {
-                        using (SqlDataReader reader = command.ExecuteReader())
-                        {
-                            while (reader.Read())
-                            {
-                                string displayText = $"Номер полки: {reader["ShelfNumber"]}, Номер секции: {reader["SectionNumber"]} (Название зала: {reader["LibraryRoomName"]})";
-                                comboBoxShelves.Items.Add(new KeyValuePair<int, string>((int)reader["ShelfID"], displayText));
-                            }
-                        }
-                    }
-                }
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show($"Произошла ошибка при заполнении списка полок: {ex.Message}");
-            }
-        }
-
-        private void FillSectionsComboBox(ComboBox comboBoxSections)
-        {
-            try
-            {
-                using (SqlConnection connection = new SqlConnection(connectionString))
-                {
-                    connection.Open();
-                    string query = "SELECT Sections.SectionID, Sections.SectionNumber, LibraryRooms.LibraryRoomName " +
-                                   "FROM Sections " +
-                                   "INNER JOIN LibraryRooms ON Sections.LibraryRoomID = LibraryRooms.LibraryRoomID";
-                    using (SqlCommand command = new SqlCommand(query, connection))
-                    {
-                        using (SqlDataReader reader = command.ExecuteReader())
-                        {
-                            while (reader.Read())
-                            {
-                                string displayText = $"Номер секции: {reader["SectionNumber"]} (Название зала: {reader["LibraryRoomName"]})";
-                                comboBoxSections.Items.Add(new KeyValuePair<int, string>((int)reader["SectionID"], displayText));
-                            }
-                        }
-                    }
-                }
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show($"Произошла ошибка при заполнении списка секций: {ex.Message}");
-            }
-        }
-
-
-        private void FillSubscriptionsComboBox(ComboBox comboBoxSubscriptions)
-        {
-            try
-            {
-                using (SqlConnection connection = new SqlConnection(connectionString))
-                {
-                    connection.Open();
-                    string query = "SELECT SubscriptionID, LastName + ' ' + FirstName + ' ' + MiddleName AS ReaderName FROM Subscriptions";
-                    using (SqlCommand command = new SqlCommand(query, connection))
-                    {
-                        using (SqlDataReader reader = command.ExecuteReader())
-                        {
-                            while (reader.Read())
-                            {
-                                comboBoxSubscriptions.Items.Add(new KeyValuePair<int, string>((int)reader["SubscriptionID"], reader["ReaderName"].ToString()));
-                            }
-                        }
-                    }
-                }
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show($"Произошла ошибка при заполнении списка подписок: {ex.Message}");
-            }
-
-        }
-
-        private void FillAvailabilityComboBox(ComboBox comboBoxAvailability)
-        {
-            try
-            {
-                comboBoxAvailability.Items.Add(new KeyValuePair<int, string>(1, "Доступна"));
-                comboBoxAvailability.Items.Add(new KeyValuePair<int, string>(0, "Списана"));
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show($"Произошла ошибка при заполнении списка доступности: {ex.Message}");
-            }
-        }
-
-        private void FillBookInventoryComboBox(ComboBox comboBoxBookInventory)
-        {
-            try
-            {
-                using (SqlConnection connection = new SqlConnection(connectionString))
-                {
-                    connection.Open();
-                    string query = "SELECT BooksInventorisation.BookInventoryID, Books.BookName, BooksInventorisation.CopyNumber " +
-                                   "FROM BooksInventorisation " +
-                                   "INNER JOIN Books ON BooksInventorisation.BookID = Books.BookID " +
-                                   "WHERE BooksInventorisation.IsAvailable = 1";
-                    using (SqlCommand command = new SqlCommand(query, connection))
-                    {
-                        using (SqlDataReader reader = command.ExecuteReader())
-                        {
-                            while (reader.Read())
-                            {
-                                string displayText = $"ID: {reader["BookInventoryID"]}, Книга: {reader["BookName"]}, Номер копии: {reader["CopyNumber"]}";
-                                comboBoxBookInventory.Items.Add(new KeyValuePair<int, string>((int)reader["BookInventoryID"], displayText));
-                            }
-                        }
-                    }
-                }
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show($"Произошла ошибка при заполнении списка инвентаризации книг: {ex.Message}");
-            }
-        }
-
-        private void FillActionTypeComboBox(ComboBox comboBoxActionType)
-        {
-            try
-            {
-                comboBoxActionType.Items.Add(new KeyValuePair<int, string>(1, "Взял(а)"));
-                comboBoxActionType.Items.Add(new KeyValuePair<int, string>(0, "Вернул(а)"));
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show($"Произошла ошибка при заполнении списка типов действий: {ex.Message}");
-            }
         }
 
     }
