@@ -112,6 +112,66 @@ namespace Library
             dataGrid.ItemsSource = dataTable.DefaultView;
         }
 
+        private void btnBooksShelves_Click(object sender, RoutedEventArgs e)
+        {
+            currentTable = "Books_Shelves";
+            dataAdapter = dbOps.FillDataGridForDisplay($"EXEC GetBooks_ShelvesData", out dataTable);
+            editDataAdapter = dbOps.FillDataGridForEdit($"SELECT * FROM {currentTable}", out editDataTable);
+            dataTable.TableName = currentTable;
+            editDataTable.TableName = currentTable;
+            dataGrid.ItemsSource = dataTable.DefaultView;
+        }
+
+        private void btnAuthors_Click(object sender, RoutedEventArgs e)
+        {
+            currentTable = "Authors";
+            dataAdapter = dbOps.FillDataGridForDisplay($"SELECT * FROM {currentTable}", out dataTable);
+            editDataAdapter = dbOps.FillDataGridForEdit($"SELECT * FROM {currentTable}", out editDataTable);
+            dataTable.TableName = currentTable;
+            editDataTable.TableName = currentTable;
+            dataGrid.ItemsSource = dataTable.DefaultView;
+        }
+
+        private void btnWorksAuthors_Click(object sender, RoutedEventArgs e)
+        {
+            currentTable = "Works_Authors";
+            dataAdapter = dbOps.FillDataGridForDisplay($"EXEC GetWorks_AuthorsData", out dataTable);
+            editDataAdapter = dbOps.FillDataGridForEdit($"SELECT * FROM {currentTable}", out editDataTable);
+            dataTable.TableName = currentTable;
+            editDataTable.TableName = currentTable;
+            dataGrid.ItemsSource = dataTable.DefaultView;
+        }
+
+        private void btnGenres_Click(object sender, RoutedEventArgs e)
+        {
+            currentTable = "Genres";
+            dataAdapter = dbOps.FillDataGridForDisplay($"SELECT * FROM {currentTable}", out dataTable);
+            editDataAdapter = dbOps.FillDataGridForEdit($"SELECT * FROM {currentTable}", out editDataTable);
+            dataTable.TableName = currentTable;
+            editDataTable.TableName = currentTable;
+            dataGrid.ItemsSource = dataTable.DefaultView;
+        }
+
+        private void btnWorksGenres_Click(object sender, RoutedEventArgs e)
+        {
+            currentTable = "Works_Genres";
+            dataAdapter = dbOps.FillDataGridForDisplay($"EXEC GetWorks_GenresData", out dataTable);
+            editDataAdapter = dbOps.FillDataGridForEdit($"SELECT * FROM {currentTable}", out editDataTable);
+            dataTable.TableName = currentTable;
+            editDataTable.TableName = currentTable;
+            dataGrid.ItemsSource = dataTable.DefaultView;
+        }
+
+        private void btnPublishers_Click(object sender, RoutedEventArgs e)
+        {
+            currentTable = "Publishers";
+            dataAdapter = dbOps.FillDataGridForDisplay($"SELECT * FROM {currentTable}", out dataTable);
+            editDataAdapter = dbOps.FillDataGridForEdit($"SELECT * FROM {currentTable}", out editDataTable);
+            dataTable.TableName = currentTable;
+            editDataTable.TableName = currentTable;
+            dataGrid.ItemsSource = dataTable.DefaultView;
+        }
+
 
         private void Add_Click(object sender, RoutedEventArgs e)
         {
@@ -136,6 +196,22 @@ namespace Library
                     else if (currentTable == "Works_Books")
                     {
                         dataAdapter = dbOps.FillDataGridForDisplay($"EXEC GetWorks_BooksData", out dataTable);
+                    }
+                    else if (currentTable == "Books_Shelves")
+                    {
+                        dataAdapter = dbOps.FillDataGridForDisplay($"EXEC GetBooks_ShelvesData", out dataTable);
+                    }
+                    else if (currentTable == "Books_Shelves")
+                    {
+                        dataAdapter = dbOps.FillDataGridForDisplay($"EXEC GetBooks_ShelvesData", out dataTable);
+                    }
+                    else if (currentTable == "Works_Authors")
+                    {
+                        dataAdapter = dbOps.FillDataGridForDisplay($"EXEC GetWorks_AuthorsData", out dataTable);
+                    }
+                    else if (currentTable == "Works_Genres")
+                    {
+                        dataAdapter = dbOps.FillDataGridForDisplay($"EXEC GetWorks_GenresData", out dataTable);
                     }
                     else
                     {
@@ -183,6 +259,18 @@ namespace Library
                             {
                                 dataAdapter = dbOps.FillDataGridForDisplay($"EXEC GetWorks_BooksData", out dataTable);
                             }
+                            else if (currentTable == "Books_Shelves")
+                            {
+                                dataAdapter = dbOps.FillDataGridForDisplay($"EXEC GetBooks_ShelvesData", out dataTable);
+                            }
+                            else if (currentTable == "Works_Authors")
+                            {
+                                dataAdapter = dbOps.FillDataGridForDisplay($"EXEC GetWorks_AuthorsData", out dataTable);
+                            }
+                            else if (currentTable == "Works_Genres")
+                            {
+                                dataAdapter = dbOps.FillDataGridForDisplay($"EXEC GetWorks_GenresData", out dataTable);
+                            }
                             else
                             {
                                 dataAdapter = dbOps.FillDataGridForDisplay($"SELECT * FROM {currentTable}", out dataTable);
@@ -211,7 +299,6 @@ namespace Library
                 dbOps.DeleteRow(row, editDataTable, dataAdapter, currentTable, dataGrid);
             }
         }
-
     }
 
 }

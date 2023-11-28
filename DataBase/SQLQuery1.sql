@@ -53,12 +53,32 @@ CREATE TABLE LibraryEvents (
 );
 
 --------------------------------------------
+
+drop procedure EditLibraryEvents;
 CREATE PROCEDURE DeleteFromLibraryEvents
     @EventID INT
 AS
 BEGIN
     -- ”дал€ем запись из таблицы LibraryEvents
     DELETE FROM LibraryEvents WHERE EventID = @EventID;
+END
+
+
+CREATE PROCEDURE UpdateFromLibraryEvents
+    @EventID INT,
+    @EventType NVARCHAR(50),
+    @EventName NVARCHAR(50),
+    @EventDate DATE,
+    @LibrarianID INT
+AS
+BEGIN
+    UPDATE LibraryEvents
+    SET
+        EventType = @EventType,
+        EventName = @EventName,
+        EventDate = @EventDate,
+        LibrarianID = @LibrarianID
+    WHERE EventID = @EventID;
 END
 ----------------------------------------------
 
@@ -98,6 +118,8 @@ BEGIN
     -- “еперь мы можем безопасно удалить запись из таблицы LibraryRooms
     DELETE FROM LibraryRooms WHERE LibraryRoomID = @LibraryRoomID;
 END
+
+
 -------------------------------------------
 
 
@@ -132,6 +154,17 @@ BEGIN
     -- “еперь мы можем безопасно удалить запись из таблицы Sections
     DELETE FROM Sections WHERE SectionID = @SectionID;
 END
+
+CREATE PROCEDURE UpdateSections
+    @SectionID INT,
+    @LibraryRoomID INT
+AS
+BEGIN
+    UPDATE Sections
+    SET LibraryRoomID = @LibraryRoomID
+    WHERE SectionID = @SectionID;
+END
+
 
 ---------------------------------------------
 
@@ -178,11 +211,58 @@ CREATE TABLE Works (
 	WorkName NVARCHAR(100)
 );
 
+-----------------------------------
+CREATE PROCEDURE DeleteFromWorks
+    @WorkID INT
+AS
+BEGIN
+    -- ”дал€ем все св€занные записи из таблицы Works_Books
+    DELETE FROM Works_Books WHERE WorkID = @WorkID;
+
+    -- “еперь мы можем безопасно удалить запись из таблицы Works
+    DELETE FROM Works WHERE WorkID = @WorkID;
+END
+
+CREATE PROCEDURE GetWorksData
+AS
+BEGIN
+    SELECT 
+        Works.WorkID, 
+        Works.WorkName
+    FROM 
+        Works;
+END
+------------------------------------
+
 CREATE TABLE Books (
 	BookID INT PRIMARY KEY,
 	BookName NVARCHAR(100),
 	PublisherDate DATE NOT NULL
 );
+
+----------------------------------
+CREATE PROCEDURE DeleteFromBooks
+    @BookID INT
+AS
+BEGIN
+    -- ”дал€ем все св€занные записи из таблицы Works_Books
+    DELETE FROM Works_Books WHERE BookID = @BookID;
+
+    -- “еперь мы можем безопасно удалить запись из таблицы Books
+    DELETE FROM Books WHERE BookID = @BookID;
+END
+
+CREATE PROCEDURE GetBooksData
+AS
+BEGIN
+    SELECT 
+        Books.BookID, 
+        Books.BookName,
+        Books.PublisherDate
+    FROM 
+        Books;
+END
+------------------------------------
 
 CREATE TABLE Works_Books (
 	Works_BooksID INT PRIMARY KEY,
@@ -190,12 +270,63 @@ CREATE TABLE Works_Books (
 	BookID INT, FOREIGN KEY (BookID) REFERENCES Books(BookID) ON DELETE CASCADE
 );
 
+-------------------------------------
+CREATE PROCEDURE DeleteFromWorks_Books
+    @Works_BooksID INT
+AS
+BEGIN
+    -- ”дал€ем запись из таблицы Works_Books
+    DELETE FROM Works_Books WHERE Works_BooksID = @Works_BooksID;
+END
+
+CREATE PROCEDURE GetWorks_BooksData
+AS
+BEGIN
+    SELECT 
+        Works_Books.Works_BooksID, 
+        Works_Books.WorkID, 
+        Works.WorkName,
+        Works_Books.BookID,
+        Books.BookName
+    FROM 
+        Works_Books 
+    INNER JOIN 
+        Works ON Works_Books.WorkID = Works.WorkID
+    INNER JOIN
+        Books ON Works_Books.BookID = Books.BookID;
+END
+-----------------------------------
+
 
 CREATE TABLE Books_Shelves (
 	Books_ShelvesID INT PRIMARY KEY,
 	BookID INT, FOREIGN KEY (BookID) REFERENCES Books(BookID),
 	ShelfID INT, FOREIGN KEY (ShelfID) REFERENCES Shelves(ShelfID)
 );
+
+----------------------------
+CREATE PROCEDURE DeleteFromBooks_Shelves
+    @Books_ShelvesID INT
+AS
+BEGIN
+    -- ”дал€ем запись из таблицы Books_Shelves
+    DELETE FROM Books_Shelves WHERE Books_ShelvesID = @Books_ShelvesID;
+END
+
+CREATE PROCEDURE GetBooks_ShelvesData
+AS
+BEGIN
+    SELECT 
+        Books_Shelves.Books_ShelvesID, 
+        Books_Shelves.BookID, 
+        Books.BookName,
+        Books_Shelves.ShelfID
+    FROM 
+        Books_Shelves 
+    INNER JOIN 
+        Books ON Books_Shelves.BookID = Books.BookID;
+END
+-----------------------------------
 
 CREATE TABLE Authors (
 	AuthorID INT PRIMARY KEY,
@@ -205,22 +336,105 @@ CREATE TABLE Authors (
 	Pseudonym NVARCHAR(50)
 );
 
+------------------------------------
+CREATE PROCEDURE DeleteFromAuthors
+    @AuthorID INT
+AS
+BEGIN
+    -- ”дал€ем все св€занные записи из таблицы Works_Authors
+    DELETE FROM Works_Authors WHERE AuthorID = @AuthorID;
+
+    -- “еперь мы можем безопасно удалить запись из таблицы Authors
+    DELETE FROM Authors WHERE AuthorID = @AuthorID;
+END
+----------------------------------------
+
 CREATE TABLE Works_Authors (
 	Works_AuthorsID INT PRIMARY KEY,
 	WorkID INT, FOREIGN KEY (WorkID) REFERENCES Works(WorkID) ON DELETE CASCADE,
 	AuthorID INT, FOREIGN KEY (AuthorID) REFERENCES Authors(AuthorID) ON DELETE CASCADE,
 );
 
+------------------------------------
+CREATE PROCEDURE DeleteFromWorks_Authors
+    @Works_AuthorsID INT
+AS
+BEGIN
+    -- ”дал€ем запись из таблицы Works_Authors
+    DELETE FROM Works_Authors WHERE Works_AuthorsID = @Works_AuthorsID;
+END
+
+CREATE PROCEDURE GetWorks_AuthorsData
+AS
+BEGIN
+    SELECT 
+        Works_Authors.Works_AuthorsID, 
+        Works_Authors.WorkID, 
+        Works.WorkName,
+        Works_Authors.AuthorID,
+        Authors.LastName,
+        Authors.FirstName,
+        Authors.MiddleName,
+        Authors.Pseudonym
+    FROM 
+        Works_Authors 
+    INNER JOIN 
+        Works ON Works_Authors.WorkID = Works.WorkID
+    INNER JOIN
+        Authors ON Works_Authors.AuthorID = Authors.AuthorID;
+END
+---------------------------------------
+
 CREATE TABLE Genres (
 	GenreID INT PRIMARY KEY,
 	GenreName NVARCHAR(50) NOT NULL
 );
+
+----------------------------
+CREATE PROCEDURE DeleteFromGenres
+    @GenreID INT
+AS
+BEGIN
+    -- ”дал€ем все св€занные записи из таблицы Works_Genres
+    DELETE FROM Works_Genres WHERE GenreID = @GenreID;
+
+    -- “еперь мы можем безопасно удалить запись из таблицы Genres
+    DELETE FROM Genres WHERE GenreID = @GenreID;
+END
+----------------------
 
 CREATE TABLE Works_Genres (
 	Works_GenresID INT PRIMARY KEY,
 	WorkID INT, FOREIGN KEY (WorkID) REFERENCES Works(WorkID) ON DELETE CASCADE,
 	GenreID INT, FOREIGN KEY (GenreID) REFERENCES Genres(GenreID) ON DELETE CASCADE
 );
+
+----------------------------------
+CREATE PROCEDURE DeleteFromWorks_Genres
+    @Works_GenresID INT
+AS
+BEGIN
+    -- ”дал€ем запись из таблицы Works_Genres
+    DELETE FROM Works_Genres WHERE Works_GenresID = @Works_GenresID;
+END
+
+CREATE PROCEDURE GetWorks_GenresData
+AS
+BEGIN
+    SELECT 
+        Works_Genres.Works_GenresID, 
+        Works_Genres.WorkID, 
+        Works.WorkName,
+        Works_Genres.GenreID,
+        Genres.GenreName
+    FROM 
+        Works_Genres 
+    INNER JOIN 
+        Works ON Works_Genres.WorkID = Works.WorkID
+    INNER JOIN
+        Genres ON Works_Genres.GenreID = Genres.GenreID;
+END
+-----------------------------------
 
 CREATE TABLE Publishers (
 	PublisherID INT PRIMARY KEY,

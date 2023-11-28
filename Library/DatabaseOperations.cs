@@ -76,6 +76,18 @@ namespace Library
             {
                 dataAdapter = FillDataGridForDisplay($"EXEC GetWorks_BooksData", out dataTable);
             }
+            else if (currentTable == "Books_Shelves")
+            {
+                dataAdapter = FillDataGridForDisplay($"EXEC GetBooks_ShelvesData", out dataTable);
+            }
+            else if (currentTable == "Works_Authors")
+            {
+                dataAdapter = FillDataGridForDisplay($"EXEC GetWorks_AuthorsData", out dataTable);
+            }
+            else if (currentTable == "Works_Genres")
+            {
+                dataAdapter = FillDataGridForDisplay($"EXEC GetWorks_GenresData", out dataTable);
+            }
             else
             {
                 dataAdapter = FillDataGridForDisplay($"SELECT * FROM {currentTable}", out dataTable);

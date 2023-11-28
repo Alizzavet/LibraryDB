@@ -91,6 +91,39 @@ namespace Library
                                 FillBooksComboBox(comboBoxBooks);
                             }
                             break;
+                        case "AuthorID":
+                            if (row.Table.TableName == "Authors")
+                            {
+                                textBox = CreateTextBox(row, column);
+                            }
+                            else
+                            {
+                                ComboBox comboBoxAuthors = CreateComboBox("comboBoxAuthors", row, column);
+                                FillAuthorsComboBox(comboBoxAuthors);
+                            }
+                            break;
+                        case "GenreID":
+                            if (row.Table.TableName == "Genres")
+                            {
+                                textBox = CreateTextBox(row, column);
+                            }
+                            else
+                            {
+                                ComboBox comboBoxGenres = CreateComboBox("comboBoxGenres", row, column);
+                                FillGenresComboBox(comboBoxGenres);
+                            }
+                            break;
+                        case "PublisherID":
+                            if (row.Table.TableName == "Publishers")
+                            {
+                                textBox = CreateTextBox(row, column);
+                            }
+                            else
+                            {
+                                ComboBox comboBoxPublishers = CreateComboBox("comboBoxPublishers", row, column);
+                                FillPublishersComboBox(comboBoxPublishers);
+                            }
+                            break;
                         default:
                             textBox = CreateTextBox(row, column);
                             break;
@@ -294,6 +327,83 @@ namespace Library
             }
         }
 
+        private void FillGenresComboBox(ComboBox comboBoxGenres)
+        {
+            try
+            {
+                using (SqlConnection connection = new SqlConnection(connectionString))
+                {
+                    connection.Open();
+                    string query = "SELECT GenreName, GenreID FROM Genres";
+                    using (SqlCommand command = new SqlCommand(query, connection))
+                    {
+                        using (SqlDataReader reader = command.ExecuteReader())
+                        {
+                            while (reader.Read())
+                            {
+                                comboBoxGenres.Items.Add(new KeyValuePair<int, string>((int)reader["GenreID"], reader["GenreName"].ToString()));
+                            }
+                        }
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Произошла ошибка при заполнении списка жанров: {ex.Message}");
+            }
+        }
+
+        private void FillAuthorsComboBox(ComboBox comboBoxAuthors)
+        {
+            try
+            {
+                using (SqlConnection connection = new SqlConnection(connectionString))
+                {
+                    connection.Open();
+                    string query = "SELECT LastName + ' ' + FirstName + ' ' + MiddleName AS AuthorName, AuthorID FROM Authors";
+                    using (SqlCommand command = new SqlCommand(query, connection))
+                    {
+                        using (SqlDataReader reader = command.ExecuteReader())
+                        {
+                            while (reader.Read())
+                            {
+                                comboBoxAuthors.Items.Add(new KeyValuePair<int, string>((int)reader["AuthorID"], reader["AuthorName"].ToString()));
+                            }
+                        }
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Произошла ошибка при заполнении списка авторов: {ex.Message}");
+            }
+        }
+
+        private void FillPublishersComboBox(ComboBox comboBoxPublishers)
+        {
+            try
+            {
+                using (SqlConnection connection = new SqlConnection(connectionString))
+                {
+                    connection.Open();
+                    string query = "SELECT PublisherName, PublisherID FROM Publishers";
+                    using (SqlCommand command = new SqlCommand(query, connection))
+                    {
+                        using (SqlDataReader reader = command.ExecuteReader())
+                        {
+                            while (reader.Read())
+                            {
+                                comboBoxPublishers.Items.Add(new KeyValuePair<int, string>((int)reader["PublisherID"], reader["PublisherName"].ToString()));
+                            }
+                        }
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Произошла ошибка при заполнении списка издателей: {ex.Message}");
+            }
+        }
 
     }
 }

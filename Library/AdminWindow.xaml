@@ -5,16 +5,16 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:Library"
         mc:Ignorable="d"
-        Title="AdminWindow" Height="450" Width="800">
+        Title="AdminWindow" Height="600" Width="1000">
     <Grid>
         <Button x:Name="btnLibraryEvents" Content="Мероприятия" HorizontalAlignment="Left" Margin="10,10,0,0" VerticalAlignment="Top" Width="80" Click="btnLibraryEvents_Click"/>
-        <Button x:Name="btnSubscriptions" Content="Абонементы" HorizontalAlignment="Left" Margin="10,50,0,0" VerticalAlignment="Top" Width="80" Click="btnSubscriptions_Click"/>
-        <Button x:Name="btnLibraryRooms" Content="Залы" HorizontalAlignment="Left" Margin="10,90,0,0" VerticalAlignment="Top" Width="75" Click="btnLibraryRooms_Click"/>
-        <Button x:Name="btnSections" Content="Секции" HorizontalAlignment="Left" Margin="10,130,0,0" VerticalAlignment="Top" Width="75" Click="btnSections_Click"/>
-        <Button x:Name="btnShelves" Content="Полки" HorizontalAlignment="Left" Margin="10,170,0,0" VerticalAlignment="Top" Width="75" Click="btnShelves_Click"/>
-        <Button x:Name="btnWorks" Content="Произведения" HorizontalAlignment="Left" Margin="10,210,0,0" VerticalAlignment="Top" Width="75" Click="btnWorks_Click"/>
-        <Button x:Name="btnBooks" Content="Книги" HorizontalAlignment="Left" Margin="10,250,0,0" VerticalAlignment="Top" Width="75" Click="btnBooks_Click"/>
-        <Button x:Name="btnWorksBooks" Content="Произведения_Книги" HorizontalAlignment="Left" Margin="10,290,0,0" VerticalAlignment="Top" Width="85" Height="35" Click="btnWorksBooks_Click">
+        <Button x:Name="btnSubscriptions" Content="Абонементы" HorizontalAlignment="Left" Margin="10,40,0,0" VerticalAlignment="Top" Width="80" Click="btnSubscriptions_Click"/>
+        <Button x:Name="btnLibraryRooms" Content="Залы" HorizontalAlignment="Left" Margin="10,70,0,0" VerticalAlignment="Top" Width="75" Click="btnLibraryRooms_Click"/>
+        <Button x:Name="btnSections" Content="Секции" HorizontalAlignment="Left" Margin="10,100,0,0" VerticalAlignment="Top" Width="75" Click="btnSections_Click"/>
+        <Button x:Name="btnShelves" Content="Полки" HorizontalAlignment="Left" Margin="10,130,0,0" VerticalAlignment="Top" Width="75" Click="btnShelves_Click"/>
+        <Button x:Name="btnWorks" Content="Произведения" HorizontalAlignment="Left" Margin="10,160,0,0" VerticalAlignment="Top" Width="75" Click="btnWorks_Click"/>
+        <Button x:Name="btnBooks" Content="Книги" HorizontalAlignment="Left" Margin="10,190,0,0" VerticalAlignment="Top" Width="75" Click="btnBooks_Click"/>
+        <Button x:Name="btnWorksBooks" Content="Произведения_Книги" HorizontalAlignment="Left" Margin="10,220,0,0" VerticalAlignment="Top" Width="85" Height="35" Click="btnWorksBooks_Click">
             <Button.ContentTemplate>
                 <DataTemplate>
                     <TextBlock TextWrapping="Wrap" Text="{Binding Content, RelativeSource={RelativeSource Mode=TemplatedParent}}" />
@@ -22,7 +22,29 @@
             </Button.ContentTemplate>
         </Button>
 
-        <DataGrid x:Name="dataGrid" HorizontalAlignment="Left" Margin="100,10,0,0" VerticalAlignment="Top" Height="400" Width="675">
+        <Button x:Name="btnBooksShelves" Content="Книги на полке" HorizontalAlignment="Left" Margin="10,265,0,0" VerticalAlignment="Top"   Click="btnBooksShelves_Click"/>
+        <Button x:Name="btnAuthors" Content="Авторы" HorizontalAlignment="Left" Margin="10,295,0,0" VerticalAlignment="Top" Width="75" Click="btnAuthors_Click"/>
+
+        <Button x:Name="btnWorksAuthors" Content="Произведения_Авторы" HorizontalAlignment="Left" Margin="10,320,0,0" VerticalAlignment="Top" Width="89" Height="35" Click="btnWorksAuthors_Click">
+            <Button.ContentTemplate>
+                <DataTemplate>
+                    <TextBlock TextWrapping="Wrap" Text="{Binding Content, RelativeSource={RelativeSource Mode=TemplatedParent}}" />
+                </DataTemplate>
+            </Button.ContentTemplate>
+        </Button>
+
+        <Button x:Name="btnGenres" Content="Жанры" HorizontalAlignment="Left" Margin="10,360,0,0" VerticalAlignment="Top" Width="75" Click="btnGenres_Click"/>
+        <Button x:Name="btnWorksGenres" Content="Произведения_Жанры" HorizontalAlignment="Left" Margin="10,385,0,0" VerticalAlignment="Top" Width="89" Height="35" Click="btnWorksGenres_Click">
+            <Button.ContentTemplate>
+                <DataTemplate>
+                    <TextBlock TextWrapping="Wrap" Text="{Binding Content, RelativeSource={RelativeSource Mode=TemplatedParent}}" />
+                </DataTemplate>
+            </Button.ContentTemplate>
+        </Button>
+        <Button x:Name="btnPublishers" Content="Издатели" HorizontalAlignment="Left" Margin="10,425,0,0" VerticalAlignment="Top" Width="75" Click="btnPublishers_Click"/>
+
+
+        <DataGrid x:Name="dataGrid" HorizontalAlignment="Left" Margin="135,10,0,0" VerticalAlignment="Top" Height="535" Width="840">
             <DataGrid.ContextMenu>
                 <ContextMenu>
                     <MenuItem Header="Добавить" Click="Add_Click"/>
