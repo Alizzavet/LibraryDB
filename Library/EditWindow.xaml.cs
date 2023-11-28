@@ -124,6 +124,30 @@ namespace Library
                                 FillPublishersComboBox(comboBoxPublishers);
                             }
                             break;
+                        case "IsAvailable":
+                            if (row.Table.TableName == "Inventory")
+                            {
+                                ComboBox comboBoxIsAvailable = CreateComboBox("comboBoxIsAvailable", row, column);
+                                comboBoxIsAvailable.Items.Add(new KeyValuePair<int, string>(1, "В наличии"));
+                                comboBoxIsAvailable.Items.Add(new KeyValuePair<int, string>(0, "Списана"));
+                            }
+                            else
+                            {
+                                textBox = CreateTextBox(row, column);
+                            }
+                            break;
+                        case "ActID":
+                            if (row.Table.TableName == "Acts")
+                            {
+                                textBox = CreateTextBox(row, column);
+                            }
+                            else
+                            {
+                                ComboBox comboBoxActs = CreateComboBox("comboBoxActs", row, column);
+                                FillActsComboBox(comboBoxActs);
+                            }
+                            break;
+
                         default:
                             textBox = CreateTextBox(row, column);
                             break;
@@ -404,6 +428,33 @@ namespace Library
                 MessageBox.Show($"Произошла ошибка при заполнении списка издателей: {ex.Message}");
             }
         }
+
+        private void FillActsComboBox(ComboBox comboBoxActs)
+        {
+            try
+            {
+                using (SqlConnection connection = new SqlConnection(connectionString))
+                {
+                    connection.Open();
+                    string query = "SELECT ActID FROM Acts";
+                    using (SqlCommand command = new SqlCommand(query, connection))
+                    {
+                        using (SqlDataReader reader = command.ExecuteReader())
+                        {
+                            while (reader.Read())
+                            {
+                                comboBoxActs.Items.Add(new KeyValuePair<int, string>((int)reader["ActID"], reader["ActID"].ToString()));
+                            }
+                        }
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Произошла ошибка при заполнении списка актов: {ex.Message}");
+            }
+        }
+
 
     }
 }

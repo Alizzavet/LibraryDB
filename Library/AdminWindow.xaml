@@ -22,6 +22,13 @@
             </Button.ContentTemplate>
         </Button>
 
+        <Button x:Name="btnActsBooks" Content="Акты_Книги" HorizontalAlignment="Left" Margin="10,523,0,0" VerticalAlignment="Top" Width="80" Height="18" Click="btnActsBooks_Click">
+            <Button.ContentTemplate>
+                <DataTemplate>
+                    <TextBlock TextWrapping="Wrap" Text="{Binding Content, RelativeSource={RelativeSource Mode=TemplatedParent}}" />
+                </DataTemplate>
+            </Button.ContentTemplate>
+        </Button>
         <Button x:Name="btnBooksShelves" Content="Книги на полке" HorizontalAlignment="Left" Margin="10,265,0,0" VerticalAlignment="Top"   Click="btnBooksShelves_Click"/>
         <Button x:Name="btnAuthors" Content="Авторы" HorizontalAlignment="Left" Margin="10,295,0,0" VerticalAlignment="Top" Width="75" Click="btnAuthors_Click"/>
 
@@ -42,6 +49,17 @@
             </Button.ContentTemplate>
         </Button>
         <Button x:Name="btnPublishers" Content="Издатели" HorizontalAlignment="Left" Margin="10,425,0,0" VerticalAlignment="Top" Width="75" Click="btnPublishers_Click"/>
+
+        <Button x:Name="btnBooksPublishers" Content="Книги_Издатели" HorizontalAlignment="Left" Margin="10,450,0,0" VerticalAlignment="Top" Width="103" Height="20" Click="btnBooksPublishers_Click">
+            <Button.ContentTemplate>
+                <DataTemplate>
+                    <TextBlock TextWrapping="Wrap" Text="{Binding Content, RelativeSource={RelativeSource Mode=TemplatedParent}}" />
+                </DataTemplate>
+            </Button.ContentTemplate>
+        </Button>
+        <Button x:Name="btnActs" Content="Акты" HorizontalAlignment="Left" Margin="10,475,0,0" VerticalAlignment="Top" Width="85" Click="btnActs_Click" Height="18"/>
+
+        <Button x:Name="btnInventory" Content="Инвентаризация" HorizontalAlignment="Left" Margin="10,498,0,0" VerticalAlignment="Top" Width="103" Click="btnInventory_Click" Height="20"/>
 
 
         <DataGrid x:Name="dataGrid" HorizontalAlignment="Left" Margin="135,10,0,0" VerticalAlignment="Top" Height="535" Width="840">

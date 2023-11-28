@@ -28,10 +28,15 @@ namespace Library
         {
             DataRow row = dataTable.NewRow();
             string idColumnName = dataTable.Columns[0].ColumnName;
-            int maxId = dataTable.AsEnumerable().Max(r => r.Field<int>(idColumnName));
+            int maxId = 0;
+            if (dataTable.Rows.Count > 0)
+            {
+                maxId = dataTable.AsEnumerable().Max(r => r.Field<int>(idColumnName));
+            }
             row[idColumnName] = maxId + 1;
             return row;
         }
+
 
         public void UpdateRow(DataTable dataTable, SqlDataAdapter dataAdapter)
         {
@@ -84,9 +89,21 @@ namespace Library
             {
                 dataAdapter = FillDataGridForDisplay($"EXEC GetWorks_AuthorsData", out dataTable);
             }
+            else if (currentTable == "Books_Publishers")
+            {
+                dataAdapter = FillDataGridForDisplay($"EXEC GetBooks_PublishersData", out dataTable);
+            }
             else if (currentTable == "Works_Genres")
             {
                 dataAdapter = FillDataGridForDisplay($"EXEC GetWorks_GenresData", out dataTable);
+            }
+            else if (currentTable == "Acts_Books")
+            {
+                dataAdapter = FillDataGridForDisplay($"EXEC GetGetActs_BooksData", out dataTable);
+            }
+            else if (currentTable == "BooksInventorisation")
+            {
+                dataAdapter = FillDataGridForDisplay($"EXEC GetBooksInventorisationData", out dataTable);
             }
             else
             {
