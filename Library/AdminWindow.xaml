@@ -68,7 +68,7 @@
             </Button.ContentTemplate>
         </Button>
 
-        <Button x:Name="RegisterActs" Content="Оформить выдачу/возврат" HorizontalAlignment="Left" Margin="869,523,0,0" VerticalAlignment="Top" Width="121" Height="48" Click="btnExecutionAct_Click"/>
+        <Button x:Name="RegisterActs" Content="Зарегистрировать акт" HorizontalAlignment="Left" Margin="864,20,0,0" VerticalAlignment="Top" Width="126" Height="40" Click="btnExecutionAct_Click"/>
 
 
         <DataGrid x:Name="dataGrid" IsReadOnly="True" HorizontalAlignment="Center" Margin="0,80,0,0" VerticalAlignment="Top" Height="477" Width="728">

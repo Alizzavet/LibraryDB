@@ -294,7 +294,6 @@ namespace Library
                         EditWindow editWindow = new EditWindow(editRow, false); // передаем false, потому что это существующая запись
                         if (editWindow.ShowDialog() == true)
                         {
-                            // Обновляем editDataTable
                             dbOps.UpdateRow(editDataTable, editDataAdapter);
 
                             DataView();

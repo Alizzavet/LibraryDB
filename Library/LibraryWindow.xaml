@@ -9,7 +9,8 @@
     <Grid>
         <Button x:Name="btnLibraryEvents" Content="Мероприятия" HorizontalAlignment="Left" Margin="10,10,0,0" VerticalAlignment="Top" Width="75" Click="btnLibraryEvents_Click"/>
         <Button x:Name="btnSubscriptions" Content="Абонементы" HorizontalAlignment="Left" Margin="10,50,0,0" VerticalAlignment="Top" Width="75" Click="btnSubscriptions_Click"/>
-        <DataGrid x:Name="dataGrid" IsReadOnly="True" HorizontalAlignment="Left" Margin="100,10,0,0" VerticalAlignment="Top" Height="400" Width="675">
+        <Button x:Name="RegisterActs" Content="Оформить выдачу/возврат" HorizontalAlignment="Left" Margin="543,363,0,0" VerticalAlignment="Top" Width="204" Height="35" Click="btnExecutionAct_Click"/>
+        <DataGrid x:Name="dataGrid" IsReadOnly="True" HorizontalAlignment="Left" Margin="122,10,0,0" VerticalAlignment="Top" Height="313" Width="653">
             <DataGrid.ContextMenu>
                 <ContextMenu>
                     <MenuItem Header="Добавить" Click="Add_Click"/>

@@ -116,6 +116,13 @@ namespace Library
             }
         }
 
+        private void btnExecutionAct_Click(object sender, RoutedEventArgs e)
+        {
+            ActWindow actWindow = new ActWindow();
+            actWindow.Show();
+            Close();
+        }
+
         private void DataView()
         {
             if (currentTable == "Acts")
