@@ -36,7 +36,7 @@ namespace Library
         private void btnLibraryEvents_Click(object sender, RoutedEventArgs e)
         {
             currentTable = "LibraryEvents";
-            dataAdapter = dbOps.FillDataGridForDisplay($"SELECT * FROM {currentTable}", out dataTable);
+            dataAdapter = dbOps.FillDataGridForDisplay($"EXEC GetLibraryEventsData", out dataTable);
             editDataAdapter = dbOps.FillDataGridForEdit($"SELECT * FROM {currentTable}", out editDataTable);
             dataTable.TableName = currentTable;
             editDataTable.TableName = currentTable;
@@ -223,49 +223,7 @@ namespace Library
                     editDataTable.Rows.Add(row);
                     dbOps.UpdateRow(editDataTable, editDataAdapter); // Обновляем editDataTable
 
-                    // Обновляем dataTable и DataGrid
-                    if (currentTable == "Sections")
-                    {
-                        dataAdapter = dbOps.FillDataGridForDisplay($"EXEC GetSectionsData", out dataTable);
-                    }
-                    else if (currentTable == "Shelves")
-                    {
-                        dataAdapter = dbOps.FillDataGridForDisplay($"EXEC GetShelvesData", out dataTable);
-                    }
-                    else if (currentTable == "Works_Books")
-                    {
-                        dataAdapter = dbOps.FillDataGridForDisplay($"EXEC GetWorks_BooksData", out dataTable);
-                    }
-                    else if (currentTable == "Books_Shelves")
-                    {
-                        dataAdapter = dbOps.FillDataGridForDisplay($"EXEC GetBooks_ShelvesData", out dataTable);
-                    }
-                    else if (currentTable == "Books_Publishers")
-                    {
-                        dataAdapter = dbOps.FillDataGridForDisplay($"EXEC GetBooks_PublishersData", out dataTable);
-                    }
-                    else if (currentTable == "Works_Authors")
-                    {
-                        dataAdapter = dbOps.FillDataGridForDisplay($"EXEC GetWorks_AuthorsData", out dataTable);
-                    }
-                    else if (currentTable == "Works_Genres")
-                    {
-                        dataAdapter = dbOps.FillDataGridForDisplay($"EXEC GetWorks_GenresData", out dataTable);
-                    }
-                    else if (currentTable == "Acts_Books")
-                    {
-                        dataAdapter = dbOps.FillDataGridForDisplay($"EXEC GetActs_BooksData", out dataTable);
-                    }
-                    else if (currentTable == "BooksInventorisation")
-                    {
-                        dataAdapter = dbOps.FillDataGridForDisplay($"EXEC GetBooksInventorisationData", out dataTable);
-                    }
-                    else
-                    {
-                        dataAdapter = dbOps.FillDataGridForDisplay($"SELECT * FROM {currentTable}", out dataTable);
-                    }
-                    dataTable.TableName = currentTable;
-                    dataGrid.ItemsSource = dataTable.DefaultView;
+                    DataView();
                 }
             }
             catch (Exception ex)
@@ -273,8 +231,6 @@ namespace Library
                 MessageBox.Show($"Произошла ошибка: {ex.Message}");
             }
         }
-
-
 
         private void Edit_Click(object sender, RoutedEventArgs e)
         {
@@ -293,49 +249,7 @@ namespace Library
                             // Обновляем editDataTable
                             dbOps.UpdateRow(editDataTable, editDataAdapter);
 
-                            // Обновляем dataTable и DataGrid
-                            if (currentTable == "Sections")
-                            {
-                                dataAdapter = dbOps.FillDataGridForDisplay($"EXEC GetSectionsData", out dataTable);
-                            }
-                            else if (currentTable == "Shelves")
-                            {
-                                dataAdapter = dbOps.FillDataGridForDisplay($"EXEC GetShelvesData", out dataTable);
-                            }
-                            else if (currentTable == "Works_Books")
-                            {
-                                dataAdapter = dbOps.FillDataGridForDisplay($"EXEC GetWorks_BooksData", out dataTable);
-                            }
-                            else if (currentTable == "Books_Shelves")
-                            {
-                                dataAdapter = dbOps.FillDataGridForDisplay($"EXEC GetBooks_ShelvesData", out dataTable);
-                            }
-                            else if (currentTable == "Works_Authors")
-                            {
-                                dataAdapter = dbOps.FillDataGridForDisplay($"EXEC GetWorks_AuthorsData", out dataTable);
-                            }
-                            else if (currentTable == "Works_Genres")
-                            {
-                                dataAdapter = dbOps.FillDataGridForDisplay($"EXEC GetWorks_GenresData", out dataTable);
-                            }
-                            else if (currentTable == "Books_Publishers")
-                            {
-                                dataAdapter = dbOps.FillDataGridForDisplay($"EXEC GetBooks_PublishersData", out dataTable);
-                            }
-                            else if (currentTable == "Acts_Books")
-                            {
-                                dataAdapter = dbOps.FillDataGridForDisplay($"EXEC GetActsBooksData", out dataTable);
-                            }
-                            else if (currentTable == "BooksInventorisation")
-                            {
-                                dataAdapter = dbOps.FillDataGridForDisplay($"EXEC GetBooksInventorisationData", out dataTable);
-                            }
-                            else
-                            {
-                                dataAdapter = dbOps.FillDataGridForDisplay($"SELECT * FROM {currentTable}", out dataTable);
-                            }
-                            dataTable.TableName = currentTable;
-                            dataGrid.ItemsSource = dataTable.DefaultView;
+                            DataView();
                         }
                     }
                 }
@@ -355,6 +269,60 @@ namespace Library
                 int id = (int)row[0]; // Получаем ID строки здесь
                 dbOps.DeleteRow(row, editDataTable, dataAdapter, currentTable, dataGrid);
             }
+        }
+
+        private void DataView()
+        {
+            if (currentTable == "Sections")
+            {
+                dataAdapter = dbOps.FillDataGridForDisplay($"EXEC GetSectionsData", out dataTable);
+            }
+            else if (currentTable == "Shelves")
+            {
+                dataAdapter = dbOps.FillDataGridForDisplay($"EXEC GetShelvesData", out dataTable);
+            }
+            else if (currentTable == "Works_Books")
+            {
+                dataAdapter = dbOps.FillDataGridForDisplay($"EXEC GetWorks_BooksData", out dataTable);
+            }
+            else if (currentTable == "Books_Shelves")
+            {
+                dataAdapter = dbOps.FillDataGridForDisplay($"EXEC GetBooks_ShelvesData", out dataTable);
+            }
+            else if (currentTable == "Books_Publishers")
+            {
+                dataAdapter = dbOps.FillDataGridForDisplay($"EXEC GetBooks_PublishersData", out dataTable);
+            }
+            else if (currentTable == "Works_Authors")
+            {
+                dataAdapter = dbOps.FillDataGridForDisplay($"EXEC GetWorks_AuthorsData", out dataTable);
+            }
+            else if (currentTable == "Works_Genres")
+            {
+                dataAdapter = dbOps.FillDataGridForDisplay($"EXEC GetWorks_GenresData", out dataTable);
+            }
+            else if (currentTable == "Acts_Books")
+            {
+                dataAdapter = dbOps.FillDataGridForDisplay($"EXEC GetActs_BooksData", out dataTable);
+            }
+            else if (currentTable == "BooksInventorisation")
+            {
+                dataAdapter = dbOps.FillDataGridForDisplay($"EXEC GetBooksInventorisationData", out dataTable);
+            }
+            else if (currentTable == "Acts")
+            {
+                dataAdapter = dbOps.FillDataGridForDisplay($"EXEC GetActsData", out dataTable);
+            }
+            else if (currentTable == "LibraryEvents")
+            {
+                dataAdapter = dbOps.FillDataGridForDisplay($"EXEC GetLibraryEventsData", out dataTable);
+            }
+            else
+            {
+                dataAdapter = dbOps.FillDataGridForDisplay($"SELECT * FROM {currentTable}", out dataTable);
+            }
+            dataTable.TableName = currentTable;
+            dataGrid.ItemsSource = dataTable.DefaultView;
         }
     }
 

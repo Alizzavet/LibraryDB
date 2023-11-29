@@ -23,7 +23,6 @@ namespace Library
     {
         private DataRow row;
         private Dictionary<string, Control> controls = new Dictionary<string, Control>();
-        private string connectionString = "Data Source=ALIZZAVET\\ELIZAVETA;Initial Catalog=Библиотека;Integrated Security=True";
         private ComboBoxHelper comboBoxHelper = new ComboBoxHelper();
 
         public EditWindow(DataRow row, bool isNewRecord)
@@ -292,6 +291,5 @@ namespace Library
         {
             DialogResult = false;
         }
-
     }
 }

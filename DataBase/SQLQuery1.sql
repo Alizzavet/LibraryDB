@@ -273,10 +273,9 @@ BEGIN
 END
 -----------------------------------
 
-
 CREATE TABLE Books_Shelves (
 	Books_ShelvesID INT PRIMARY KEY,
-	BookID INT, FOREIGN KEY (BookID) REFERENCES Books(BookID),
+	BookInventoryID INT, FOREIGN KEY (BookInventoryID) REFERENCES BooksInventorisation(BookInventoryID),
 	ShelfID INT, FOREIGN KEY (ShelfID) REFERENCES Shelves(ShelfID)
 );
 
@@ -294,14 +293,26 @@ AS
 BEGIN
     SELECT 
         Books_Shelves.Books_ShelvesID, 
-        Books_Shelves.BookID, 
+        Books_Shelves.BookInventoryID, 
         Books.BookName,
-        Books_Shelves.ShelfID
+        Shelves.ShelfID,
+        Shelves.ShelfNumber,
+        Sections.SectionNumber,
+        LibraryRooms.LibraryRoomName
     FROM 
         Books_Shelves 
     INNER JOIN 
-        Books ON Books_Shelves.BookID = Books.BookID;
+        BooksInventorisation ON Books_Shelves.BookInventoryID = BooksInventorisation.BookInventoryID
+    INNER JOIN
+        Books ON BooksInventorisation.BookID = Books.BookID
+    INNER JOIN
+        Shelves ON Books_Shelves.ShelfID = Shelves.ShelfID
+    INNER JOIN
+        Sections ON Shelves.SectionID = Sections.SectionID
+    INNER JOIN
+        LibraryRooms ON Sections.LibraryRoomID = LibraryRooms.LibraryRoomID;
 END
+
 -----------------------------------
 
 CREATE TABLE Authors (
@@ -486,9 +497,9 @@ BEGIN
     SELECT 
         Acts.ActID, 
         Acts.LibrarianID,
-        Users.LastName + ' ' + Users.FirstName + ' ' + Users.MiddleName AS LibrarianName,
+        Users.LastName + ' ' + Users.FirstName + ' ' + ISNULL(Users.MiddleName, '') AS LibrarianName,
         Acts.SubscriptionID,
-        Subscriptions.LastName + ' ' + Subscriptions.FirstName + ' ' + Subscriptions.MiddleName AS ReaderName,
+        Subscriptions.LastName + ' ' + Subscriptions.FirstName + ' ' + ISNULL(Subscriptions.MiddleName, '') AS ReaderName,
         Acts.ActionType,
         Acts.EventDate
     FROM 
@@ -500,6 +511,7 @@ BEGIN
     INNER JOIN
         Subscriptions ON Acts.SubscriptionID = Subscriptions.SubscriptionID;
 END
+
 
 
 ------------------------------
@@ -540,9 +552,8 @@ END
 
 CREATE TABLE Acts_Books (
 	Acts_BooksID INT PRIMARY KEY,
-	BookID INT, FOREIGN KEY (BookID) REFERENCES Books(BookID) ON DELETE CASCADE,
-	ActID INT, FOREIGN KEY (ActID) REFERENCES Acts(ActID) ON DELETE CASCADE,
-    CopyNumber INT NOT NULL
+	BookInventoryID INT, FOREIGN KEY (BookInventoryID) REFERENCES BooksInventorisation(BookInventoryID) ON DELETE CASCADE,
+	ActID INT, FOREIGN KEY (ActID) REFERENCES Acts(ActID) ON DELETE CASCADE
 );
 
 --------------------------------
@@ -559,11 +570,11 @@ AS
 BEGIN
     SELECT 
         Acts_Books.Acts_BooksID, 
-        Acts_Books.BookID, 
+        Acts_Books.BookInventoryID, 
         Books.BookName,
         Acts_Books.ActID,
         Acts.ActionType,
-        Acts_Books.CopyNumber,
+        BooksInventorisation.CopyNumber,
         CASE 
             WHEN BooksInventorisation.IsAvailable = 1 THEN '¬ Ì‡ÎË˜ËË'
             ELSE '—ÔËÒ‡Ì‡'
@@ -571,12 +582,13 @@ BEGIN
     FROM 
         Acts_Books 
     INNER JOIN 
-        Books ON Acts_Books.BookID = Books.BookID
+        BooksInventorisation ON Acts_Books.BookInventoryID = BooksInventorisation.BookInventoryID
     INNER JOIN
-        Acts ON Acts_Books.ActID = Acts.ActID
+        Books ON BooksInventorisation.BookID = Books.BookID
     INNER JOIN
-        BooksInventorisation ON Acts_Books.BookID = BooksInventorisation.BookID AND Acts_Books.CopyNumber = BooksInventorisation.CopyNumber;
+        Acts ON Acts_Books.ActID = Acts.ActID;
 END
+
 ------------------------------------
 
 /* «¿œŒÀÕ≈Õ»≈ “¿¡À»÷ */ -----------------------------------------------------------------------------------------------

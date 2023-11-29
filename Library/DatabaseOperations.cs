@@ -105,6 +105,14 @@ namespace Library
             {
                 dataAdapter = FillDataGridForDisplay($"EXEC GetBooksInventorisationData", out dataTable);
             }
+            else if (currentTable == "Acts")
+            {
+                dataAdapter = FillDataGridForDisplay($"EXEC GetActsData", out dataTable);
+            }
+            else if (currentTable == "LibraryEvents")
+            {
+                dataAdapter = FillDataGridForDisplay($"EXEC GetLibraryEventsData", out dataTable);
+            }
             else
             {
                 dataAdapter = FillDataGridForDisplay($"SELECT * FROM {currentTable}", out dataTable);

@@ -203,14 +203,29 @@ namespace Library
                 using (SqlConnection connection = new SqlConnection(connectionString))
                 {
                     connection.Open();
-                    string query = "SELECT ActID FROM Acts";
+                    string query = @"
+                SELECT 
+                    Acts.ActID, 
+                    Users.LastName + ' ' + Users.FirstName + ' ' + ISNULL(Users.MiddleName, '') AS LibrarianName,
+                    Subscriptions.LastName + ' ' + Subscriptions.FirstName + ' ' + ISNULL(Subscriptions.MiddleName, '') AS ReaderName,
+                    Acts.ActionType,
+                    Acts.EventDate
+                FROM 
+                    Acts 
+                INNER JOIN 
+                    Librarians ON Acts.LibrarianID = Librarians.LibrarianID
+                INNER JOIN
+                    Users ON Librarians.UserID = Users.UserID
+                INNER JOIN
+                    Subscriptions ON Acts.SubscriptionID = Subscriptions.SubscriptionID";
                     using (SqlCommand command = new SqlCommand(query, connection))
                     {
                         using (SqlDataReader reader = command.ExecuteReader())
                         {
                             while (reader.Read())
                             {
-                                comboBoxActs.Items.Add(new KeyValuePair<int, string>((int)reader["ActID"], reader["ActID"].ToString()));
+                                string actInfo = $"ActID: {reader["ActID"]}, Librarian: {reader["LibrarianName"]}, Reader: {reader["ReaderName"]}, ActionType: {reader["ActionType"]}, EventDate: {reader["EventDate"]}";
+                                comboBoxActs.Items.Add(new KeyValuePair<int, string>((int)reader["ActID"], actInfo));
                             }
                         }
                     }
@@ -221,6 +236,7 @@ namespace Library
                 MessageBox.Show($"Произошла ошибка при заполнении списка актов: {ex.Message}");
             }
         }
+
 
         public void FillShelvesComboBox(ComboBox comboBoxShelves)
         {
@@ -289,7 +305,7 @@ namespace Library
                 using (SqlConnection connection = new SqlConnection(connectionString))
                 {
                     connection.Open();
-                    string query = "SELECT SubscriptionID, LastName + ' ' + FirstName + ' ' + MiddleName AS ReaderName FROM Subscriptions";
+                    string query = "SELECT SubscriptionID, LastName + ' ' + FirstName + ' ' + ISNULL(MiddleName, '') AS ReaderName FROM Subscriptions";
                     using (SqlCommand command = new SqlCommand(query, connection))
                     {
                         using (SqlDataReader reader = command.ExecuteReader())
@@ -306,8 +322,8 @@ namespace Library
             {
                 MessageBox.Show($"Произошла ошибка при заполнении списка подписок: {ex.Message}");
             }
-
         }
+
 
         public void FillAvailabilityComboBox(ComboBox comboBoxAvailability)
         {
