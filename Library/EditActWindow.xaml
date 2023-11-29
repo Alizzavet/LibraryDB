@@ -1,0 +1,27 @@
+﻿<Window x:Class="Library.EditActWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:Library"
+        mc:Ignorable="d"
+        Title="EditActWindow" Height="450" Width="800">
+    <Grid>
+        <Label Content="Библиотекарь:" HorizontalAlignment="Left" Margin="10,10,0,0" VerticalAlignment="Top"/>
+        <ComboBox x:Name="comboBoxLibrarians" HorizontalAlignment="Left" Margin="10,30,0,0" VerticalAlignment="Top" Width="120"/>
+
+        <Label Content="Читатель:" HorizontalAlignment="Left" Margin="10,60,0,0" VerticalAlignment="Top"/>
+        <ComboBox x:Name="comboBoxSubscriptions" HorizontalAlignment="Left" Margin="10,80,0,0" VerticalAlignment="Top" Width="120"/>
+
+        <Label Content="Тип действия:" HorizontalAlignment="Left" Margin="10,110,0,0" VerticalAlignment="Top"/>
+        <ComboBox x:Name="comboBoxActionType" HorizontalAlignment="Left" Margin="10,130,0,0" VerticalAlignment="Top" Width="120"/>
+
+        <Label Content="Дата:" HorizontalAlignment="Left" Margin="10,160,0,0" VerticalAlignment="Top"/>
+        <DatePicker x:Name="datePickerEventDate" HorizontalAlignment="Left" Margin="10,180,0,0" VerticalAlignment="Top" Width="120"/>
+
+        <Label Content="Инвентаризация:" HorizontalAlignment="Left" Margin="10,210,0,0" VerticalAlignment="Top"/>
+        <ComboBox x:Name="comboBoxInventorisation" HorizontalAlignment="Left" Margin="10,230,0,0" VerticalAlignment="Top" Width="120"/>
+
+        <Button Content="Сохранить" HorizontalAlignment="Right" Margin="0,10,10,0" VerticalAlignment="Top" Width="75" Click="Save_Click"/>
+    </Grid>
+</Window>

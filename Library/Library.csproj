@@ -55,7 +55,15 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Page Include="ActWindow.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="AdminWindow.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="EditActWindow.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -79,6 +87,9 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
+    <Compile Include="ActWindow.xaml.cs">
+      <DependentUpon>ActWindow.xaml</DependentUpon>
+    </Compile>
     <Compile Include="AdminWindow.xaml.cs">
       <DependentUpon>AdminWindow.xaml</DependentUpon>
     </Compile>
@@ -88,6 +99,9 @@
     </Compile>
     <Compile Include="ComboBoxHelper.cs" />
     <Compile Include="DatabaseOperations.cs" />
+    <Compile Include="EditActWindow.xaml.cs">
+      <DependentUpon>EditActWindow.xaml</DependentUpon>
+    </Compile>
     <Compile Include="EditUserDataWindow.xaml.cs">
       <DependentUpon>EditUserDataWindow.xaml</DependentUpon>
     </Compile>

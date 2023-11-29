@@ -253,6 +253,13 @@ namespace Library
             dataGrid.Columns[1].Visibility = Visibility.Collapsed;
         }
 
+        private void btnExecutionAct_Click(object sender, RoutedEventArgs e)
+        {
+            ActWindow actWindow= new ActWindow();
+            actWindow.Show();
+            Close();
+        }
+
         private void Add_Click(object sender, RoutedEventArgs e)
         {
             try
@@ -314,11 +321,9 @@ namespace Library
 
         private void btnEditUsers_Click(object sender, RoutedEventArgs e)
         {
-            // Создаем новое окно EditUserWindow
             EditUserWindow editUserWindow = new EditUserWindow();
-
-            // Открываем окно
             editUserWindow.Show();
+            Close();
         }
 
 

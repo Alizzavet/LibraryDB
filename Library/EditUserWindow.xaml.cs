@@ -34,6 +34,7 @@ namespace Library
             DataTable dataTable = new DataTable();
             dataAdapter.Fill(dataTable);
             dataGrid.ItemsSource = dataTable.DefaultView;
+            dataGrid.Columns[0].Visibility = Visibility.Collapsed;
         }
 
         private void Add_Click(object sender, RoutedEventArgs e)
@@ -144,7 +145,6 @@ namespace Library
                     using (SqlCommand command = new SqlCommand("DeleteUser", connection))
                     {
                         command.CommandType = CommandType.StoredProcedure;
-
                         command.Parameters.Add(new SqlParameter("@UserID", userID));
 
                         connection.Open();
@@ -155,6 +155,13 @@ namespace Library
                 // Обновите DataGrid
                 ViewUsersButton_Click(null, null);
             }
+        }
+
+        private void BackToAdminWindow_Click(object sender, RoutedEventArgs e)
+        {
+            AdminWindow adminWindow = new AdminWindow();
+            adminWindow.Show();
+            this.Close();
         }
     }
 

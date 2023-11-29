@@ -36,15 +36,25 @@ namespace Library
         private void btnLibraryEvents_Click(object sender, RoutedEventArgs e)
         {
             currentTable = "LibraryEvents";
-            dataAdapter = dbOps.FillDataGrid($"SELECT * FROM {currentTable}", out dataTable);
+            dataAdapter = dbOps.FillDataGridForDisplay($"EXEC GetLibraryEventsData", out dataTable);
+            editDataAdapter = dbOps.FillDataGridForEdit($"SELECT * FROM {currentTable}", out editDataTable);
+            dataTable.TableName = currentTable;
+            editDataTable.TableName = currentTable;
             dataGrid.ItemsSource = dataTable.DefaultView;
+
+            dataGrid.Columns[0].Visibility = Visibility.Collapsed;
+            dataGrid.Columns[4].Visibility = Visibility.Collapsed;
         }
 
         private void btnSubscriptions_Click(object sender, RoutedEventArgs e)
         {
             currentTable = "Subscriptions";
-            dataAdapter = dbOps.FillDataGrid($"SELECT * FROM {currentTable}", out dataTable);
+            dataAdapter = dbOps.FillDataGridForDisplay($"SELECT * FROM {currentTable}", out dataTable);
+            editDataAdapter = dbOps.FillDataGridForEdit($"SELECT * FROM {currentTable}", out editDataTable);
+            dataTable.TableName = currentTable;
+            editDataTable.TableName = currentTable;
             dataGrid.ItemsSource = dataTable.DefaultView;
+            dataGrid.Columns[0].Visibility = Visibility.Collapsed;
         }
 
         private void Add_Click(object sender, RoutedEventArgs e)
@@ -57,11 +67,8 @@ namespace Library
                 {
                     editDataTable.Rows.Add(row);
                     dbOps.UpdateRow(editDataTable, editDataAdapter); // Обновляем editDataTable
-                    dbOps.UpdateRow(dataTable, dataAdapter); // Обновляем dataTable
 
-                    dataAdapter = dbOps.FillDataGridForDisplay($"SELECT * FROM {currentTable}", out dataTable);
-                    dataTable.TableName = currentTable;
-                    dataGrid.ItemsSource = dataTable.DefaultView;
+                    DataView();
                 }
             }
             catch (Exception ex)
@@ -69,7 +76,6 @@ namespace Library
                 MessageBox.Show($"Произошла ошибка: {ex.Message}");
             }
         }
-
 
         private void Edit_Click(object sender, RoutedEventArgs e)
         {
@@ -88,21 +94,7 @@ namespace Library
                             // Обновляем editDataTable
                             dbOps.UpdateRow(editDataTable, editDataAdapter);
 
-                            // Обновляем dataTable и DataGrid
-                            if (currentTable == "Sections")
-                            {
-                                dataAdapter = dbOps.FillDataGridForDisplay($"EXEC GetSectionsData", out dataTable);
-                            }
-                            else if (currentTable == "Shelves")
-                            {
-                                dataAdapter = dbOps.FillDataGridForDisplay($"EXEC GetShelvesData", out dataTable);
-                            }
-                            else
-                            {
-                                dataAdapter = dbOps.FillDataGridForDisplay($"SELECT * FROM {currentTable}", out dataTable);
-                            }
-                            dataTable.TableName = currentTable;
-                            dataGrid.ItemsSource = dataTable.DefaultView;
+                            DataView();
                         }
                     }
                 }
@@ -122,6 +114,24 @@ namespace Library
                 int id = (int)row[0]; // Получаем ID строки здесь
                 dbOps.DeleteRow(row, editDataTable, dataAdapter, currentTable, dataGrid);
             }
+        }
+
+        private void DataView()
+        {
+            if (currentTable == "Acts")
+            {
+                dataAdapter = dbOps.FillDataGridForDisplay($"EXEC GetActsData", out dataTable);
+            }
+            else if (currentTable == "LibraryEvents")
+            {
+                dataAdapter = dbOps.FillDataGridForDisplay($"EXEC GetLibraryEventsData", out dataTable);
+            }
+            else
+            {
+                dataAdapter = dbOps.FillDataGridForDisplay($"SELECT * FROM {currentTable}", out dataTable);
+            }
+            dataTable.TableName = currentTable;
+            dataGrid.ItemsSource = dataTable.DefaultView;
         }
 
     }
