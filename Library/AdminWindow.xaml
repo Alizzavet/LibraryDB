@@ -60,9 +60,17 @@
         <Button x:Name="btnActs" Content="Акты" HorizontalAlignment="Left" Margin="10,475,0,0" VerticalAlignment="Top" Width="85" Click="btnActs_Click" Height="18"/>
 
         <Button x:Name="btnInventory" Content="Инвентаризация" HorizontalAlignment="Left" Margin="10,498,0,0" VerticalAlignment="Top" Width="103" Click="btnInventory_Click" Height="20"/>
+        <Button x:Name="btnEditUsers" HorizontalAlignment="Left" Margin="879,99,0,0" VerticalAlignment="Top" Width="100" Click="btnEditUsers_Click">
+            <Button.ContentTemplate>
+                <DataTemplate>
+                    <TextBlock TextWrapping="Wrap" Text="Редактирование пользователей" />
+                </DataTemplate>
+            </Button.ContentTemplate>
+        </Button>
 
 
-        <DataGrid x:Name="dataGrid" HorizontalAlignment="Left" Margin="135,10,0,0" VerticalAlignment="Top" Height="535" Width="840">
+
+        <DataGrid x:Name="dataGrid" HorizontalAlignment="Center" Margin="0,80,0,0" VerticalAlignment="Top" Height="477" Width="728">
             <DataGrid.ContextMenu>
                 <ContextMenu>
                     <MenuItem Header="Добавить" Click="Add_Click"/>

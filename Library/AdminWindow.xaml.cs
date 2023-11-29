@@ -41,6 +41,9 @@ namespace Library
             dataTable.TableName = currentTable;
             editDataTable.TableName = currentTable;
             dataGrid.ItemsSource = dataTable.DefaultView;
+
+            dataGrid.Columns[0].Visibility = Visibility.Collapsed;
+            dataGrid.Columns[4].Visibility = Visibility.Collapsed;
         }
 
         private void btnSubscriptions_Click(object sender, RoutedEventArgs e)
@@ -51,6 +54,7 @@ namespace Library
             dataTable.TableName = currentTable;
             editDataTable.TableName = currentTable;
             dataGrid.ItemsSource = dataTable.DefaultView;
+            dataGrid.Columns[0].Visibility = Visibility.Collapsed;
         }
 
         private void btnLibraryRooms_Click(object sender, RoutedEventArgs e)
@@ -61,6 +65,7 @@ namespace Library
             dataTable.TableName = currentTable;
             editDataTable.TableName = currentTable;
             dataGrid.ItemsSource = dataTable.DefaultView;
+            dataGrid.Columns[0].Visibility = Visibility.Collapsed;
         }
 
         private void btnSections_Click(object sender, RoutedEventArgs e)
@@ -71,6 +76,8 @@ namespace Library
             dataTable.TableName = currentTable;
             editDataTable.TableName = currentTable;
             dataGrid.ItemsSource = dataTable.DefaultView;
+            dataGrid.Columns[0].Visibility = Visibility.Collapsed;
+            dataGrid.Columns[2].Visibility = Visibility.Collapsed;
         }
 
         private void btnShelves_Click(object sender, RoutedEventArgs e)
@@ -81,6 +88,9 @@ namespace Library
             dataTable.TableName = currentTable;
             editDataTable.TableName = currentTable;
             dataGrid.ItemsSource = dataTable.DefaultView;
+            dataGrid.Columns[0].Visibility = Visibility.Collapsed;
+            dataGrid.Columns[2].Visibility = Visibility.Collapsed;
+            dataGrid.Columns[4].Visibility = Visibility.Collapsed;
         }
         private void btnWorks_Click(object sender, RoutedEventArgs e)
         {
@@ -90,6 +100,7 @@ namespace Library
             dataTable.TableName = currentTable;
             editDataTable.TableName = currentTable;
             dataGrid.ItemsSource = dataTable.DefaultView;
+            dataGrid.Columns[0].Visibility = Visibility.Collapsed;
         }
 
         private void btnBooks_Click(object sender, RoutedEventArgs e)
@@ -100,6 +111,7 @@ namespace Library
             dataTable.TableName = currentTable;
             editDataTable.TableName = currentTable;
             dataGrid.ItemsSource = dataTable.DefaultView;
+            dataGrid.Columns[0].Visibility = Visibility.Collapsed;
         }
 
         private void btnWorksBooks_Click(object sender, RoutedEventArgs e)
@@ -110,6 +122,9 @@ namespace Library
             dataTable.TableName = currentTable;
             editDataTable.TableName = currentTable;
             dataGrid.ItemsSource = dataTable.DefaultView;
+            dataGrid.Columns[0].Visibility = Visibility.Collapsed;
+            dataGrid.Columns[1].Visibility = Visibility.Collapsed;
+            dataGrid.Columns[3].Visibility = Visibility.Collapsed;
         }
 
         private void btnBooksShelves_Click(object sender, RoutedEventArgs e)
@@ -120,6 +135,9 @@ namespace Library
             dataTable.TableName = currentTable;
             editDataTable.TableName = currentTable;
             dataGrid.ItemsSource = dataTable.DefaultView;
+            dataGrid.Columns[0].Visibility = Visibility.Collapsed;
+            dataGrid.Columns[1].Visibility = Visibility.Collapsed;
+            dataGrid.Columns[3].Visibility = Visibility.Collapsed;
         }
 
         private void btnAuthors_Click(object sender, RoutedEventArgs e)
@@ -130,6 +148,7 @@ namespace Library
             dataTable.TableName = currentTable;
             editDataTable.TableName = currentTable;
             dataGrid.ItemsSource = dataTable.DefaultView;
+            dataGrid.Columns[0].Visibility = Visibility.Collapsed;
         }
 
         private void btnWorksAuthors_Click(object sender, RoutedEventArgs e)
@@ -140,6 +159,9 @@ namespace Library
             dataTable.TableName = currentTable;
             editDataTable.TableName = currentTable;
             dataGrid.ItemsSource = dataTable.DefaultView;
+            dataGrid.Columns[0].Visibility = Visibility.Collapsed;
+            dataGrid.Columns[1].Visibility = Visibility.Collapsed;
+            dataGrid.Columns[3].Visibility = Visibility.Collapsed;
         }
 
         private void btnGenres_Click(object sender, RoutedEventArgs e)
@@ -150,6 +172,7 @@ namespace Library
             dataTable.TableName = currentTable;
             editDataTable.TableName = currentTable;
             dataGrid.ItemsSource = dataTable.DefaultView;
+            dataGrid.Columns[0].Visibility = Visibility.Collapsed;
         }
 
         private void btnWorksGenres_Click(object sender, RoutedEventArgs e)
@@ -160,6 +183,9 @@ namespace Library
             dataTable.TableName = currentTable;
             editDataTable.TableName = currentTable;
             dataGrid.ItemsSource = dataTable.DefaultView;
+            dataGrid.Columns[0].Visibility = Visibility.Collapsed;
+            dataGrid.Columns[1].Visibility = Visibility.Collapsed;
+            dataGrid.Columns[3].Visibility = Visibility.Collapsed;
         }
 
         private void btnPublishers_Click(object sender, RoutedEventArgs e)
@@ -170,6 +196,7 @@ namespace Library
             dataTable.TableName = currentTable;
             editDataTable.TableName = currentTable;
             dataGrid.ItemsSource = dataTable.DefaultView;
+            dataGrid.Columns[0].Visibility = Visibility.Collapsed;
         }
 
         private void btnBooksPublishers_Click(object sender, RoutedEventArgs e)
@@ -180,6 +207,9 @@ namespace Library
             dataTable.TableName = currentTable;
             editDataTable.TableName = currentTable;
             dataGrid.ItemsSource = dataTable.DefaultView;
+            dataGrid.Columns[0].Visibility = Visibility.Collapsed;
+            dataGrid.Columns[1].Visibility = Visibility.Collapsed;
+            dataGrid.Columns[3].Visibility = Visibility.Collapsed;
         }
 
         private void btnActs_Click(object sender, RoutedEventArgs e)
@@ -190,6 +220,9 @@ namespace Library
             dataTable.TableName = currentTable;
             editDataTable.TableName = currentTable;
             dataGrid.ItemsSource = dataTable.DefaultView;
+            dataGrid.Columns[0].Visibility = Visibility.Collapsed;
+            dataGrid.Columns[1].Visibility = Visibility.Collapsed;
+            dataGrid.Columns[3].Visibility = Visibility.Collapsed;
         }
 
         private void btnActsBooks_Click(object sender, RoutedEventArgs e)
@@ -200,7 +233,13 @@ namespace Library
             dataTable.TableName = currentTable;
             editDataTable.TableName = currentTable;
             dataGrid.ItemsSource = dataTable.DefaultView;
+
+            // Скрываем столбцы с первичными и вторичными ключами
+            dataGrid.Columns[0].Visibility = Visibility.Collapsed; 
+            dataGrid.Columns[1].Visibility = Visibility.Collapsed; 
+            dataGrid.Columns[3].Visibility = Visibility.Collapsed; 
         }
+
 
         private void btnInventory_Click(object sender, RoutedEventArgs e)
         {
@@ -210,6 +249,8 @@ namespace Library
             dataTable.TableName = currentTable;
             editDataTable.TableName = currentTable;
             dataGrid.ItemsSource = dataTable.DefaultView;
+            dataGrid.Columns[0].Visibility = Visibility.Collapsed;
+            dataGrid.Columns[1].Visibility = Visibility.Collapsed;
         }
 
         private void Add_Click(object sender, RoutedEventArgs e)
@@ -270,6 +311,16 @@ namespace Library
                 dbOps.DeleteRow(row, editDataTable, dataAdapter, currentTable, dataGrid);
             }
         }
+
+        private void btnEditUsers_Click(object sender, RoutedEventArgs e)
+        {
+            // Создаем новое окно EditUserWindow
+            EditUserWindow editUserWindow = new EditUserWindow();
+
+            // Открываем окно
+            editUserWindow.Show();
+        }
+
 
         private void DataView()
         {

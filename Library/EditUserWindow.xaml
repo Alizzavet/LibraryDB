@@ -1,0 +1,17 @@
+﻿<Window x:Class="Library.EditUserWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="EditUserWindow" Height="450" Width="800">
+    <Grid>
+        <Button x:Name="ViewUsersButton" Content="Просмотреть пользователей" HorizontalAlignment="Center" Margin="0,54,0,0" VerticalAlignment="Top" Width="176" Click="ViewUsersButton_Click" Height="20"/>
+        <DataGrid x:Name="dataGrid" HorizontalAlignment="Center" VerticalAlignment="Top" Height="314" Width="714" Margin="0,97,0,0">
+            <DataGrid.ContextMenu>
+                <ContextMenu>
+                    <MenuItem Header="Добавить" Click="Add_Click"/>
+                    <MenuItem Header="Редактировать" Click="Edit_Click"/>
+                    <MenuItem Header="Удалить" Click="Delete_Click"/>
+                </ContextMenu>
+            </DataGrid.ContextMenu>
+        </DataGrid>
+    </Grid>
+</Window>

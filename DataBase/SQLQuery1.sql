@@ -25,26 +25,123 @@ DROP TABLE Users;
 DROP TABLE Subscriptions;
 DROP TABLE BooksInventorisation;
 */ 
+
 CREATE TABLE Users (
-    UserID INT PRIMARY KEY,
+    UserID INT IDENTITY(1,1) PRIMARY KEY,
     LastName NVARCHAR(50) NOT NULL,
     FirstName NVARCHAR(50) NOT NULL,
     MiddleName NVARCHAR(50),
-	UserLogin NVARCHAR(50),
+    UserLogin NVARCHAR(50),
     UserPassword NVARCHAR(50)
 );
 
 CREATE TABLE Librarians (
-    LibrarianID INT PRIMARY KEY,
+    LibrarianID INT IDENTITY(1,1) PRIMARY KEY,
     UserID INT, FOREIGN KEY (UserID) REFERENCES Users(UserID) ON DELETE CASCADE
 );
 
 CREATE TABLE Administrators (
-    AdministratorID INT PRIMARY KEY,
+    AdministratorID INT IDENTITY(1,1) PRIMARY KEY,
     UserID INT, FOREIGN KEY (UserID) REFERENCES Users(UserID) ON DELETE CASCADE,
     LibrarianID INT, FOREIGN KEY (LibrarianID) REFERENCES Librarians(LibrarianID)
 );
+-----------------------------------
+CREATE PROCEDURE GetUserRoles
+AS
+BEGIN
+    SELECT 
+        Users.UserID, 
+        Users.LastName, 
+        Users.FirstName, 
+        Users.MiddleName,
+        Users.UserLogin,
+        Users.UserPassword,
+        CASE 
+            WHEN Administrators.UserID IS NOT NULL THEN 'Администратор'
+            WHEN Librarians.UserID IS NOT NULL THEN 'Библиотекарь'
+            ELSE 'Пользователь'
+        END AS Role
+    FROM Users
+    LEFT JOIN Administrators ON Users.UserID = Administrators.UserID
+    LEFT JOIN Librarians ON Users.UserID = Librarians.UserID
+END
 
+
+CREATE PROCEDURE AddUser
+    @LastName NVARCHAR(50),
+    @FirstName NVARCHAR(50),
+    @MiddleName NVARCHAR(50),
+    @UserLogin NVARCHAR(50),
+    @UserPassword NVARCHAR(50),
+    @Role NVARCHAR(50)
+AS
+BEGIN
+    DECLARE @UserID INT;
+
+    INSERT INTO Users (LastName, FirstName, MiddleName, UserLogin, UserPassword)
+    VALUES (@LastName, @FirstName, @MiddleName, @UserLogin, @UserPassword);
+
+    SET @UserID = SCOPE_IDENTITY();
+
+    IF @Role = 'Библиотекарь'
+    BEGIN
+        INSERT INTO Librarians (UserID)
+        VALUES (@UserID);
+    END
+    ELSE IF @Role = 'Администратор'
+    BEGIN
+        DECLARE @LibrarianID INT;
+
+        INSERT INTO Librarians (UserID)
+        VALUES (@UserID);
+
+        SET @LibrarianID = SCOPE_IDENTITY();
+
+        INSERT INTO Administrators (UserID, LibrarianID)
+        VALUES (@UserID, @LibrarianID);
+    END
+END
+
+CREATE PROCEDURE EditUser
+    @UserID INT,
+    @LastName NVARCHAR(50),
+    @FirstName NVARCHAR(50),
+    @MiddleName NVARCHAR(50),
+    @UserLogin NVARCHAR(50),
+    @UserPassword NVARCHAR(50),
+    @Role NVARCHAR(50)
+AS
+BEGIN
+    UPDATE Users
+    SET LastName = @LastName, FirstName = @FirstName, MiddleName = @MiddleName, UserLogin = @UserLogin, UserPassword = @UserPassword
+    WHERE UserID = @UserID;
+
+    IF EXISTS (SELECT 1 FROM Administrators WHERE UserID = @UserID) AND @Role != 'Администратор'
+    BEGIN
+        DELETE FROM Administrators WHERE UserID = @UserID;
+    END
+    ELSE IF NOT EXISTS (SELECT 1 FROM Administrators WHERE UserID = @UserID) AND @Role = 'Администратор'
+    BEGIN
+        DECLARE @LibrarianID INT;
+
+        INSERT INTO Librarians (UserID)
+        VALUES (@UserID);
+
+        SET @LibrarianID = SCOPE_IDENTITY();
+
+        INSERT INTO Administrators (UserID, LibrarianID)
+        VALUES (@UserID, @LibrarianID);
+    END
+END
+
+CREATE PROCEDURE DeleteUser
+    @UserID INT
+AS
+BEGIN
+    DELETE FROM Users WHERE UserID = @UserID;
+END
+
+----------------------------------
 CREATE TABLE LibraryEvents (
 	EventID INT PRIMARY KEY,
 	EventType NVARCHAR(50) NOT NULL,
@@ -55,7 +152,6 @@ CREATE TABLE LibraryEvents (
 
 --------------------------------------------
 
-drop procedure EditLibraryEvents;
 CREATE PROCEDURE DeleteFromLibraryEvents
     @EventID INT
 AS
@@ -63,6 +159,25 @@ BEGIN
     -- Удаляем запись из таблицы LibraryEvents
     DELETE FROM LibraryEvents WHERE EventID = @EventID;
 END
+
+CREATE PROCEDURE GetLibraryEventsData
+AS
+BEGIN
+    SELECT 
+        LibraryEvents.EventID, 
+        LibraryEvents.EventType,
+        LibraryEvents.EventName,
+        LibraryEvents.EventDate,
+        LibraryEvents.LibrarianID,
+        Users.LastName + ' ' + Users.FirstName + ' ' + ISNULL(Users.MiddleName, '') AS LibrarianName
+    FROM 
+        LibraryEvents 
+    INNER JOIN 
+        Librarians ON LibraryEvents.LibrarianID = Librarians.LibrarianID
+    INNER JOIN
+        Users ON Librarians.UserID = Users.UserID;
+END
+
 ----------------------------------------------
 
 CREATE TABLE Subscriptions (
@@ -593,28 +708,28 @@ END
 
 /* ЗАПОЛНЕНИЕ ТАБЛИЦ */ -----------------------------------------------------------------------------------------------
 
-INSERT INTO Users (UserID, LastName, FirstName, MiddleName, UserPassword, UserLogin)
+INSERT INTO Users (LastName, FirstName, MiddleName, UserPassword, UserLogin)
 VALUES 
-  (1, 'Иванов', 'Антон', NULL, '35203003', 'IvanovAdmin'),
-  (2, 'Петров', 'Петр', NULL, 'securepass', 'PetrovLibra'),
-  (3, 'Сидорова', 'Елена', 'Александровна', '123456', 'SidorovaLibra'),
-  (4, 'Филаненко', 'Александр', 'Евгеньевич', 'l6w2ynvpebof_hIq54fg', 'FilanenkoAdmin'),
-  (5, 'Степулёнок', 'Елена', 'Владимировна', 'leomsupremacy', 'StepulionokAdmin');
+  ('Иванов', 'Антон', NULL, '35203003', 'IvanovAdmin'),
+  ('Петров', 'Петр', NULL, 'securepass', 'PetrovLibra'),
+  ('Сидорова', 'Елена', 'Александровна', '123456', 'SidorovaLibra'),
+  ('Филаненко', 'Александр', 'Евгеньевич', 'l6w2ynvpebof_hIq54fg', 'FilanenkoAdmin'),
+  ('Степулёнок', 'Елена', 'Владимировна', 'leomsupremacy', 'StepulionokAdmin');
 
 -- Пример заполнения таблицы Librarians
-INSERT INTO Librarians (LibrarianID, UserID)
+INSERT INTO Librarians ( UserID)
 VALUES 
-  (1, 1),
-  (2, 2),
-  (3, 3),
-  (4, 5);
+  (1),
+  (2),
+  (3),
+  (5);
 
 -- Пример заполнения таблицы Administrators
-INSERT INTO Administrators (AdministratorID, UserID, LibrarianID)
+INSERT INTO Administrators (UserID, LibrarianID)
 VALUES 
-  (1, 1, 1),
-  (2, 4, NULL),
-  (3, 5, 4);
+  (1, 1),
+  (4, NULL),
+  (5, 4);
 
 -- Пример заполнения таблицы LibraryEvents
 INSERT INTO LibraryEvents (EventID, EventType, EventName, EventDate, LibrarianID)

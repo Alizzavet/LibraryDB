@@ -147,6 +147,95 @@ namespace Library
         {
             return FillDataGrid(selectCommand, out dataTable);
         }
+
+        public void AddUser(string lastName, string firstName, string middleName, string userLogin, string userPassword, bool isLibrarian, bool isAdmin)
+        {
+            using (SqlConnection connection = new SqlConnection(connectionString))
+            {
+                connection.Open();
+
+                // Добавляем пользователя
+                string query = $"EXEC AddUser '{lastName}', '{firstName}', '{middleName}', '{userLogin}', '{userPassword}'";
+                using (SqlCommand command = new SqlCommand(query, connection))
+                {
+                    command.ExecuteNonQuery();
+                }
+
+                // Получаем ID только что добавленного пользователя
+                int userID = GetLastInsertedID("Users");
+
+                // Если пользователь является библиотекарем, добавляем его в таблицу Librarians
+                if (isLibrarian)
+                {
+                    query = $"EXEC AddLibrarian {userID}";
+                    using (SqlCommand command = new SqlCommand(query, connection))
+                    {
+                        command.ExecuteNonQuery();
+                    }
+                }
+
+                // Если пользователь является администратором, добавляем его в таблицу Administrators
+                if (isAdmin)
+                {
+                    // Получаем ID только что добавленного библиотекаря
+                    int librarianID = GetLastInsertedID("Librarians");
+
+                    query = $"EXEC AddAdministrator {userID}, {librarianID}";
+                    using (SqlCommand command = new SqlCommand(query, connection))
+                    {
+                        command.ExecuteNonQuery();
+                    }
+                }
+            }
+        }
+
+        public void EditUser(int userID, string lastName, string firstName, string middleName, string userLogin, string userPassword, bool isLibrarian, bool isAdmin)
+        {
+            using (SqlConnection connection = new SqlConnection(connectionString))
+            {
+                connection.Open();
+
+                // Обновляем информацию о пользователе
+                string query = $"UPDATE Users SET LastName = '{lastName}', FirstName = '{firstName}', MiddleName = '{middleName}', UserLogin = '{userLogin}', UserPassword = '{userPassword}' WHERE UserID = {userID}";
+                using (SqlCommand command = new SqlCommand(query, connection))
+                {
+                    command.ExecuteNonQuery();
+                }
+
+                // TODO: Обновляем информацию о библиотекаре и администраторе
+            }
+        }
+
+
+        public void DeleteUser(int userID)
+        {
+            using (SqlConnection connection = new SqlConnection(connectionString))
+            {
+                connection.Open();
+
+                // Удаляем пользователя
+                string query = $"DELETE FROM Users WHERE UserID = {userID}";
+                using (SqlCommand command = new SqlCommand(query, connection))
+                {
+                    command.ExecuteNonQuery();
+                }
+            }
+        }
+
+        public int GetLastInsertedID(string tableName)
+        {
+            using (SqlConnection connection = new SqlConnection(connectionString))
+            {
+                connection.Open();
+
+                string query = $"SELECT MAX(UserID) FROM {tableName}";
+                using (SqlCommand command = new SqlCommand(query, connection))
+                {
+                    return (int)command.ExecuteScalar();
+                }
+            }
+        }
+
     }
 
 }
