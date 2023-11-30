@@ -48,7 +48,7 @@
             <TextBlock Text="Library Administration" Foreground="White" VerticalAlignment="Center" HorizontalAlignment="Center" FontSize="20"/>
         </Border>
 
-
+        <Button x:Name="btnExit" Content="Выход" Width="80" Style="{StaticResource LibraryButtonStyle}" Click="btnExit_Click" VerticalAlignment="Top" HorizontalAlignment="Right" Margin="0,6,27,0"/>
 
         <!-- Main Content Area -->
         <Border BorderBrush="#BDC3C7" BorderThickness="0,1,0,0" Margin="150,70,10,10" Padding="10">

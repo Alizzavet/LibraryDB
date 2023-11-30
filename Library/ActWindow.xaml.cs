@@ -85,6 +85,11 @@ namespace Library
                 DataTable dataTable = new DataTable("ActsAndActsBooks");
                 dataAdapter.Fill(dataTable);
                 dataGrid.ItemsSource = dataTable.DefaultView;
+                dataGrid.Columns[0].Visibility = Visibility.Collapsed;
+                dataGrid.Columns[1].Visibility = Visibility.Collapsed;
+                dataGrid.Columns[3].Visibility = Visibility.Collapsed;
+                dataGrid.Columns[8].Visibility = Visibility.Collapsed;
+                dataGrid.Columns[7].Visibility = Visibility.Collapsed;
             }
         }
 

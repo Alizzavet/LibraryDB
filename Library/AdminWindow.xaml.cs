@@ -325,58 +325,88 @@ namespace Library
             Close();
         }
 
+        private void btnExit_Click(object sender, RoutedEventArgs e)
+        {
+            // Вызов окна подтверждения выхода
+            MessageBoxResult result = MessageBox.Show("Вы уверены, что хотите выйти?", "Подтверждение выхода", 
+                MessageBoxButton.YesNo, MessageBoxImage.Question);
+            if (result == MessageBoxResult.Yes)
+            {
+                Application.Current.Shutdown();
+            }
+        }
 
         private void DataView()
         {
             if (currentTable == "Sections")
             {
                 dataAdapter = dbOps.FillDataGridForDisplay($"EXEC GetSectionsData", out dataTable);
+                DataGridView();
                 dataGrid.Columns[2].Visibility = Visibility.Collapsed;
             }
             else if (currentTable == "Shelves")
             {
                 dataAdapter = dbOps.FillDataGridForDisplay($"EXEC GetShelvesData", out dataTable);
+                DataGridView();
+                dataGrid.Columns[2].Visibility = Visibility.Collapsed;
+                dataGrid.Columns[4].Visibility = Visibility.Collapsed;
             }
             else if (currentTable == "Works_Books")
             {
                 dataAdapter = dbOps.FillDataGridForDisplay($"EXEC GetWorks_BooksData", out dataTable);
+                DataGridView();
+                dataGrid.Columns[1].Visibility = Visibility.Collapsed;
+                dataGrid.Columns[3].Visibility = Visibility.Collapsed;
             }
             else if (currentTable == "Books_Shelves")
             {
                 dataAdapter = dbOps.FillDataGridForDisplay($"EXEC GetBooks_ShelvesData", out dataTable);
+                DataGridView();
+                dataGrid.Columns[1].Visibility = Visibility.Collapsed;
+                dataGrid.Columns[3].Visibility = Visibility.Collapsed;
             }
             else if (currentTable == "Books_Publishers")
             {
                 dataAdapter = dbOps.FillDataGridForDisplay($"EXEC GetBooks_PublishersData", out dataTable);
+                DataGridView();
+                dataGrid.Columns[1].Visibility = Visibility.Collapsed;
+                dataGrid.Columns[3].Visibility = Visibility.Collapsed;
             }
             else if (currentTable == "Works_Authors")
             {
                 dataAdapter = dbOps.FillDataGridForDisplay($"EXEC GetWorks_AuthorsData", out dataTable);
+                DataGridView();
+                dataGrid.Columns[1].Visibility = Visibility.Collapsed;
+                dataGrid.Columns[3].Visibility = Visibility.Collapsed;
             }
             else if (currentTable == "Works_Genres")
             {
                 dataAdapter = dbOps.FillDataGridForDisplay($"EXEC GetWorks_GenresData", out dataTable);
-            }
-            else if (currentTable == "Acts_Books")
-            {
-                dataAdapter = dbOps.FillDataGridForDisplay($"EXEC GetActs_BooksData", out dataTable);
+                DataGridView();
+                dataGrid.Columns[1].Visibility = Visibility.Collapsed;
+                dataGrid.Columns[3].Visibility = Visibility.Collapsed;
             }
             else if (currentTable == "BooksInventorisation")
             {
                 dataAdapter = dbOps.FillDataGridForDisplay($"EXEC GetBooksInventorisationData", out dataTable);
-            }
-            else if (currentTable == "Acts")
-            {
-                dataAdapter = dbOps.FillDataGridForDisplay($"EXEC GetActsData", out dataTable);
+                DataGridView();
+                dataGrid.Columns[1].Visibility = Visibility.Collapsed;
             }
             else if (currentTable == "LibraryEvents")
             {
                 dataAdapter = dbOps.FillDataGridForDisplay($"EXEC GetLibraryEventsData", out dataTable);
+                DataGridView();
+                dataGrid.Columns[4].Visibility = Visibility.Collapsed;
             }
             else
             {
                 dataAdapter = dbOps.FillDataGridForDisplay($"SELECT * FROM {currentTable}", out dataTable);
+                DataGridView();
             }
+        }
+
+        private void DataGridView()
+        {
             dataTable.TableName = currentTable;
             dataGrid.ItemsSource = dataTable.DefaultView;
             dataGrid.Columns[0].Visibility = Visibility.Collapsed;

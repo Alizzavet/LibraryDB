@@ -29,8 +29,8 @@
         </Style>
     </Window.Resources>
     <Grid>
-        <Button x:Name="ViewUsersButton" Content="Просмотреть пользователей" Style="{StaticResource LibraryButtonStyle}" HorizontalAlignment="Left" Margin="78,376,0,0" VerticalAlignment="Top" Width="222" Click="ViewUsersButton_Click" Height="38"/>
-        <Button x:Name="BackButton" Content="Назад" Style="{StaticResource LibraryButtonStyle}" HorizontalAlignment="Left" Margin="417,376,0,0" VerticalAlignment="Top" Width="105" Click="BackToAdminWindow_Click" Height="38" RenderTransformOrigin="-9.172,5.57" />
+        <Button x:Name="ViewUsersButton" Content="Просмотреть пользователей" Style="{StaticResource LibraryButtonStyle}" HorizontalAlignment="Left" Margin="78,358,0,0" VerticalAlignment="Top" Width="222" Click="ViewUsersButton_Click" Height="38"/>
+        <Button x:Name="BackButton" Content="Назад" Style="{StaticResource LibraryButtonStyle}" HorizontalAlignment="Left" Margin="417,360,0,0" VerticalAlignment="Top" Width="105" Click="BackToAdminWindow_Click" Height="38" RenderTransformOrigin="-9.172,5.57" />
         <DataGrid x:Name="dataGrid" IsReadOnly="True" HorizontalAlignment="Center" VerticalAlignment="Top" Height="314" Width="550" Margin="0,28,0,0">
             <DataGrid.ContextMenu>
                 <ContextMenu>

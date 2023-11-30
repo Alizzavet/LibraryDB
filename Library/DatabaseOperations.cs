@@ -72,53 +72,89 @@ namespace Library
             if (currentTable == "Sections")
             {
                 dataAdapter = FillDataGridForDisplay($"EXEC GetSectionsData", out dataTable);
+                dataTable.TableName = currentTable;
+                dataGrid.ItemsSource = dataTable.DefaultView;
+                dataGrid.Columns[0].Visibility = Visibility.Collapsed;
+                dataGrid.Columns[2].Visibility = Visibility.Collapsed;
             }
             else if (currentTable == "Shelves")
             {
                 dataAdapter = FillDataGridForDisplay($"EXEC GetShelvesData", out dataTable);
+                dataTable.TableName = currentTable;
+                dataGrid.ItemsSource = dataTable.DefaultView;
+                dataGrid.Columns[0].Visibility = Visibility.Collapsed;
+                dataGrid.Columns[2].Visibility = Visibility.Collapsed;
+                dataGrid.Columns[4].Visibility = Visibility.Collapsed;
             }
             else if (currentTable == "Works_Books")
             {
                 dataAdapter = FillDataGridForDisplay($"EXEC GetWorks_BooksData", out dataTable);
+                dataTable.TableName = currentTable;
+                dataGrid.ItemsSource = dataTable.DefaultView;
+                dataGrid.Columns[0].Visibility = Visibility.Collapsed;
+                dataGrid.Columns[1].Visibility = Visibility.Collapsed;
+                dataGrid.Columns[3].Visibility = Visibility.Collapsed;
             }
             else if (currentTable == "Books_Shelves")
             {
                 dataAdapter = FillDataGridForDisplay($"EXEC GetBooks_ShelvesData", out dataTable);
+                dataTable.TableName = currentTable;
+                dataGrid.ItemsSource = dataTable.DefaultView;
+                dataGrid.Columns[0].Visibility = Visibility.Collapsed;
+                dataGrid.Columns[1].Visibility = Visibility.Collapsed;
+                dataGrid.Columns[3].Visibility = Visibility.Collapsed;
             }
             else if (currentTable == "Works_Authors")
             {
                 dataAdapter = FillDataGridForDisplay($"EXEC GetWorks_AuthorsData", out dataTable);
+                dataTable.TableName = currentTable;
+                dataGrid.ItemsSource = dataTable.DefaultView;
+                dataGrid.Columns[0].Visibility = Visibility.Collapsed;
+                dataGrid.Columns[1].Visibility = Visibility.Collapsed;
+                dataGrid.Columns[3].Visibility = Visibility.Collapsed;
             }
             else if (currentTable == "Books_Publishers")
             {
                 dataAdapter = FillDataGridForDisplay($"EXEC GetBooks_PublishersData", out dataTable);
+                dataTable.TableName = currentTable;
+                dataGrid.ItemsSource = dataTable.DefaultView;
+                dataGrid.Columns[0].Visibility = Visibility.Collapsed;
+                dataGrid.Columns[1].Visibility = Visibility.Collapsed;
+                dataGrid.Columns[3].Visibility = Visibility.Collapsed;
             }
             else if (currentTable == "Works_Genres")
             {
                 dataAdapter = FillDataGridForDisplay($"EXEC GetWorks_GenresData", out dataTable);
-            }
-            else if (currentTable == "Acts_Books")
-            {
-                dataAdapter = FillDataGridForDisplay($"EXEC GetGetActs_BooksData", out dataTable);
+                dataTable.TableName = currentTable;
+                dataGrid.ItemsSource = dataTable.DefaultView;
+                dataGrid.Columns[0].Visibility = Visibility.Collapsed;
+                dataGrid.Columns[1].Visibility = Visibility.Collapsed;
+                dataGrid.Columns[3].Visibility = Visibility.Collapsed;
             }
             else if (currentTable == "BooksInventorisation")
             {
                 dataAdapter = FillDataGridForDisplay($"EXEC GetBooksInventorisationData", out dataTable);
-            }
-            else if (currentTable == "Acts")
-            {
-                dataAdapter = FillDataGridForDisplay($"EXEC GetActsData", out dataTable);
+                dataTable.TableName = currentTable;
+                dataGrid.ItemsSource = dataTable.DefaultView;
+                dataGrid.Columns[0].Visibility = Visibility.Collapsed;
+                dataGrid.Columns[1].Visibility = Visibility.Collapsed;
             }
             else if (currentTable == "LibraryEvents")
             {
                 dataAdapter = FillDataGridForDisplay($"EXEC GetLibraryEventsData", out dataTable);
+                dataTable.TableName = currentTable;
+                dataGrid.ItemsSource = dataTable.DefaultView;
+                dataGrid.Columns[0].Visibility = Visibility.Collapsed;
+                dataGrid.Columns[1].Visibility = Visibility.Collapsed;
+                dataGrid.Columns[4].Visibility = Visibility.Collapsed;
             }
             else
             {
                 dataAdapter = FillDataGridForDisplay($"SELECT * FROM {currentTable}", out dataTable);
+                dataTable.TableName = currentTable;
+                dataGrid.ItemsSource = dataTable.DefaultView;
+                dataGrid.Columns[0].Visibility = Visibility.Collapsed;
             }
-            dataTable.TableName = currentTable;
-            dataGrid.ItemsSource = dataTable.DefaultView;
         }
 
         

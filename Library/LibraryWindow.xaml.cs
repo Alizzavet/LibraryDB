@@ -123,6 +123,17 @@ namespace Library
             Close();
         }
 
+        private void btnExit_Click(object sender, RoutedEventArgs e)
+        {
+            // Вызов окна подтверждения выхода
+            MessageBoxResult result = MessageBox.Show("Вы уверены, что хотите выйти?", "Подтверждение выхода",
+                MessageBoxButton.YesNo, MessageBoxImage.Question);
+            if (result == MessageBoxResult.Yes)
+            {
+                Application.Current.Shutdown();
+            }
+        }
+
         private void DataView()
         {
             if (currentTable == "Acts")
@@ -132,13 +143,21 @@ namespace Library
             else if (currentTable == "LibraryEvents")
             {
                 dataAdapter = dbOps.FillDataGridForDisplay($"EXEC GetLibraryEventsData", out dataTable);
+                DataGridView();
+                dataGrid.Columns[4].Visibility = Visibility.Collapsed;
             }
             else
             {
                 dataAdapter = dbOps.FillDataGridForDisplay($"SELECT * FROM {currentTable}", out dataTable);
+                DataGridView();
             }
+        }
+
+        private void DataGridView()
+        {
             dataTable.TableName = currentTable;
             dataGrid.ItemsSource = dataTable.DefaultView;
+            dataGrid.Columns[0].Visibility = Visibility.Collapsed;
         }
 
     }

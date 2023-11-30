@@ -47,6 +47,6 @@
         <RadioButton x:Name="rbnLibrarian" Content="Библиотекарь" HorizontalAlignment="Left" Margin="10,270,0,0" VerticalAlignment="Top"/>
         <RadioButton x:Name="rbnAdministrator" Content="Администратор" HorizontalAlignment="Left" Margin="10,300,0,0" VerticalAlignment="Top"/>
 
-        <Button Content="Сохранить" Style="{StaticResource LibraryButtonStyle}" HorizontalAlignment="Center" Margin="0,336,0,0" VerticalAlignment="Top" Width="105" Click="btnSave_Click"/>
+        <Button Content="Сохранить" Style="{StaticResource LibraryButtonStyle}" HorizontalAlignment="Center" Margin="0,312,0,0" VerticalAlignment="Top" Width="154" Click="btnSave_Click" Height="39"/>
     </Grid>
 </Window>
