@@ -276,7 +276,7 @@ namespace Library
             }
             catch (Exception ex)
             {
-                MessageBox.Show($"Произошла ошибка: {ex.Message}");
+                ShowErrorMessageBox(ex);
             }
         }
 
@@ -303,21 +303,31 @@ namespace Library
             }
             catch (Exception ex)
             {
-                MessageBox.Show($"Произошла ошибка: {ex.Message}");
+                ShowErrorMessageBox(ex);
             }
         }
-
 
         private void Delete_Click(object sender, RoutedEventArgs e)
         {
-            if (dataGrid.SelectedItem is DataRowView rowView)
+            try
             {
-                DataRow row = rowView.Row;
-                int id = (int)row[0]; // Получаем ID строки здесь
-                dbOps.DeleteRow(row, editDataTable, dataAdapter, currentTable, dataGrid);
+                if (dataGrid.SelectedItem is DataRowView rowView)
+                {
+                    DataRow row = rowView.Row;
+                    int id = (int)row[0]; // Получаем ID строки здесь
+                    dbOps.DeleteRow(row, editDataTable, dataAdapter, currentTable, dataGrid);
+                }
+            }
+            catch (Exception ex)
+            {
+                ShowErrorMessageBox(ex);
             }
         }
 
+        private void ShowErrorMessageBox(Exception ex)
+        {
+            MessageBox.Show($"Произошла ошибка: {ex.Message}", "Ошибка", MessageBoxButton.OK, MessageBoxImage.Error);
+        }
         private void btnEditUsers_Click(object sender, RoutedEventArgs e)
         {
             EditUserWindow editUserWindow = new EditUserWindow();

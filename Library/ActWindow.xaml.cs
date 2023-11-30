@@ -36,8 +36,6 @@ namespace Library
         {
             EditActWindow editActWindow = new EditActWindow();
             editActWindow.ShowDialog();
-
-            // После закрытия окна редактирования обновите DataGrid
             LoadDataGrid();
         }
 
@@ -48,8 +46,6 @@ namespace Library
                 int actId = (int)row["ActID"];
                 EditActWindow editActWindow = new EditActWindow(actId);
                 editActWindow.ShowDialog();
-
-                // После закрытия окна редактирования обновите DataGrid
                 LoadDataGrid();
             }
         }
@@ -68,8 +64,6 @@ namespace Library
                     command.Parameters.AddWithValue("@ActID", actId);
                     command.ExecuteNonQuery();
                 }
-
-                // После удаления акта обновите DataGrid
                 LoadDataGrid();
             }
         }

@@ -243,37 +243,16 @@ namespace Library
 
         private void btnOK_Click(object sender, RoutedEventArgs e)
         {
-            foreach (DataColumn column in row.Table.Columns)
+            try
             {
-                if (column.DataType == typeof(DateTime))
+                foreach (DataColumn column in row.Table.Columns)
                 {
-                    DatePicker datePicker = (DatePicker)controls[column.ColumnName];
-                    if (datePicker.SelectedDate.HasValue)
+                    if (column.DataType == typeof(DateTime))
                     {
-                        row[column] = datePicker.SelectedDate.Value;
-                    }
-                    else
-                    {
-                        row[column] = DBNull.Value;
-                    }
-                }
-                else
-                {
-                    if (controls[column.ColumnName] is TextBox textBox)
-                    {
-                        if (string.IsNullOrWhiteSpace(textBox.Text))
+                        DatePicker datePicker = (DatePicker)controls[column.ColumnName];
+                        if (datePicker.SelectedDate.HasValue)
                         {
-                            MessageBox.Show($"Поле {column.ColumnName} не может быть пустым.");
-                            return;
-                        }
-                        row[column] = textBox.Text;
-                    }
-                    else if (controls[column.ColumnName] is ComboBox comboBox)
-                    {
-                        if (comboBox.SelectedValue != null)
-                        {
-                            KeyValuePair<int, string> selectedPair = (KeyValuePair<int, string>)comboBox.SelectedValue;
-                            row[column] = selectedPair.Key;
+                            row[column] = datePicker.SelectedDate.Value;
                         }
                         else
                         {
@@ -281,9 +260,38 @@ namespace Library
                             return;
                         }
                     }
+                    else
+                    {
+                        if (controls[column.ColumnName] is TextBox textBox)
+                        {
+                            if (string.IsNullOrWhiteSpace(textBox.Text))
+                            {
+                                MessageBox.Show($"Поле {column.ColumnName} не может быть пустым.");
+                                return;
+                            }
+                            row[column] = textBox.Text;
+                        }
+                        else if (controls[column.ColumnName] is ComboBox comboBox)
+                        {
+                            if (comboBox.SelectedValue != null)
+                            {
+                                KeyValuePair<int, string> selectedPair = (KeyValuePair<int, string>)comboBox.SelectedValue;
+                                row[column] = selectedPair.Key;
+                            }
+                            else
+                            {
+                                MessageBox.Show($"Поле {column.ColumnName} не может быть пустым.");
+                                return;
+                            }
+                        }
+                    }
                 }
+                this.DialogResult = true;
             }
-            this.DialogResult = true;
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Произошла ошибка: {ex.Message} Пожалуйста, заполните все данные.", "Ошибка", MessageBoxButton.OK, MessageBoxImage.Error);
+            }
         }
 
 

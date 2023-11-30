@@ -23,14 +23,21 @@ namespace Library
         public EditUserDataWindow()
         {
             InitializeComponent();
+            rbnAdministrator.IsChecked = true;
         }
 
         private void btnSave_Click(object sender, RoutedEventArgs e)
         {
-            this.DialogResult = true;
-            this.Close();
+            try
+            {
+                this.DialogResult = true;
+                this.Close();
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Произошла ошибка: {ex.Message} Пожалуйста, введите все данные корректно", "Ошибка", MessageBoxButton.OK, MessageBoxImage.Error);
+            }
         }
-
     }
 
 }

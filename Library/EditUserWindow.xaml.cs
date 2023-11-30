@@ -52,27 +52,43 @@ namespace Library
                 string userPassword = window.txtUserPassword.Text;
                 string role = window.rbnAdministrator.IsChecked.Value ? "Администратор" : "Библиотекарь";
 
-                using (SqlConnection connection = new SqlConnection(connectionString))
+                try
                 {
-                    using (SqlCommand command = new SqlCommand("AddUser", connection))
+                    using (SqlConnection connection = new SqlConnection(connectionString))
                     {
-                        command.CommandType = CommandType.StoredProcedure;
+                        using (SqlCommand command = new SqlCommand("AddUser", connection))
+                        {
+                            command.CommandType = CommandType.StoredProcedure;
 
-                        command.Parameters.Add(new SqlParameter("@LastName", lastName));
-                        command.Parameters.Add(new SqlParameter("@FirstName", firstName));
-                        command.Parameters.Add(new SqlParameter("@MiddleName", middleName));
-                        command.Parameters.Add(new SqlParameter("@UserLogin", userLogin));
-                        command.Parameters.Add(new SqlParameter("@UserPassword", userPassword));
-                        command.Parameters.Add(new SqlParameter("@Role", role));
+                            command.Parameters.Add(new SqlParameter("@LastName", lastName));
+                            command.Parameters.Add(new SqlParameter("@FirstName", firstName));
+                            command.Parameters.Add(new SqlParameter("@MiddleName", middleName));
+                            command.Parameters.Add(new SqlParameter("@UserLogin", userLogin));
+                            command.Parameters.Add(new SqlParameter("@UserPassword", userPassword));
+                            command.Parameters.Add(new SqlParameter("@Role", role));
 
-                        connection.Open();
-                        command.ExecuteNonQuery();
+                            connection.Open();
+                            command.ExecuteNonQuery();
+                        }
+                    }
+
+                    // Обновите DataGrid
+                    ViewUsersButton_Click(null, null);
+                }
+                catch (SqlException ex)
+                {
+                    if (ex.Number == 50000)
+                    {
+                        MessageBox.Show("Пожалуйста, предоставьте значения для LastName, FirstName, UserLogin и UserPassword.");
+                    }
+                    else
+                    {
+                        throw;
                     }
                 }
 
-                // Обновите DataGrid
-                ViewUsersButton_Click(null, null);
             }
+
         }
 
         private void Edit_Click(object sender, RoutedEventArgs e)

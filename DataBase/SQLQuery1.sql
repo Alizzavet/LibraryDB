@@ -585,14 +585,66 @@ BEGIN
         Publishers ON Books_Publishers.PublisherID = Publishers.PublisherID;
 END
 -------------------------------------
-
 CREATE TABLE Acts (
-	ActID INT PRIMARY KEY,
+	ActID INT IDENTITY(1,1) PRIMARY KEY,
 	LibrarianID INT, FOREIGN KEY (LibrarianID) REFERENCES Librarians(LibrarianID) ON DELETE CASCADE,
 	SubscriptionID INT, FOREIGN KEY (SubscriptionID) REFERENCES Subscriptions(SubscriptionID) ON DELETE CASCADE,
 	ActionType NVARCHAR(20) NOT NULL,
 	EventDate DATE NOT NULL
 );
+-----------------------------------------------
+CREATE PROCEDURE AddAct
+    @LibrarianID INT,
+    @SubscriptionID INT,
+    @ActionType NVARCHAR(20),
+    @EventDate DATE,
+    @BookInventoryID INT
+AS
+BEGIN
+    DECLARE @ActID INT;
+
+    -- Добавляем новый акт в таблицу Acts
+    INSERT INTO Acts (LibrarianID, SubscriptionID, ActionType, EventDate)
+    VALUES (@LibrarianID, @SubscriptionID, @ActionType, @EventDate);
+
+    -- Получаем ID только что добавленного акта
+    SET @ActID = SCOPE_IDENTITY();
+
+    -- Добавляем новую запись в таблицу Acts_Books
+    INSERT INTO Acts_Books (BookInventoryID, ActID)
+    VALUES (@BookInventoryID, @ActID);
+END
+
+CREATE PROCEDURE EditAct
+    @ActID INT,
+    @LibrarianID INT,
+    @SubscriptionID INT,
+    @ActionType NVARCHAR(20),
+    @EventDate DATE,
+    @BookInventoryID INT
+AS
+BEGIN
+    -- Обновляем акт в таблице Acts
+    UPDATE Acts
+    SET LibrarianID = @LibrarianID, SubscriptionID = @SubscriptionID, ActionType = @ActionType, EventDate = @EventDate
+    WHERE ActID = @ActID;
+
+    -- Обновляем запись в таблице Acts_Books
+    UPDATE Acts_Books
+    SET BookInventoryID = @BookInventoryID
+    WHERE ActID = @ActID;
+END
+
+CREATE PROCEDURE DeleteAct
+    @ActID INT
+AS
+BEGIN
+    -- Удаляем все связанные записи из таблицы Acts_Books
+    DELETE FROM Acts_Books WHERE ActID = @ActID;
+
+    -- Теперь мы можем безопасно удалить запись из таблицы Acts
+    DELETE FROM Acts WHERE ActID = @ActID;
+END
 
 ----------------------------------
 CREATE PROCEDURE DeleteFromActs
@@ -666,7 +718,7 @@ END
 ----------------------------------------
 
 CREATE TABLE Acts_Books (
-	Acts_BooksID INT PRIMARY KEY,
+	Acts_BooksID INT IDENTITY(1,1) PRIMARY KEY,
 	BookInventoryID INT, FOREIGN KEY (BookInventoryID) REFERENCES BooksInventorisation(BookInventoryID) ON DELETE CASCADE,
 	ActID INT, FOREIGN KEY (ActID) REFERENCES Acts(ActID) ON DELETE CASCADE
 );
@@ -704,6 +756,42 @@ BEGIN
         Acts ON Acts_Books.ActID = Acts.ActID;
 END
 
+
+-----------------------------АКТЫ!!!!-----------------------
+CREATE PROCEDURE GetActsAndActsBooksData
+AS
+BEGIN
+    SELECT 
+        Acts.ActID, 
+        Acts.LibrarianID,
+        Users.LastName + ' ' + Users.FirstName + ' ' + ISNULL(Users.MiddleName, '') AS LibrarianName,
+        Acts.SubscriptionID,
+        Subscriptions.LastName + ' ' + Subscriptions.FirstName + ' ' + ISNULL(Subscriptions.MiddleName, '') AS ReaderName,
+        Acts.ActionType,
+        Acts.EventDate,
+        Acts_Books.Acts_BooksID, 
+        Acts_Books.BookInventoryID, 
+        Books.BookName,
+        BooksInventorisation.CopyNumber,
+        CASE 
+            WHEN BooksInventorisation.IsAvailable = 1 THEN 'В наличии'
+            ELSE 'Списана'
+        END AS Availability
+    FROM 
+        Acts 
+    INNER JOIN 
+        Librarians ON Acts.LibrarianID = Librarians.LibrarianID
+    INNER JOIN
+        Users ON Librarians.UserID = Users.UserID
+    INNER JOIN
+        Subscriptions ON Acts.SubscriptionID = Subscriptions.SubscriptionID
+    INNER JOIN
+        Acts_Books ON Acts.ActID = Acts_Books.ActID
+    INNER JOIN 
+        BooksInventorisation ON Acts_Books.BookInventoryID = BooksInventorisation.BookInventoryID
+    INNER JOIN
+        Books ON BooksInventorisation.BookID = Books.BookID;
+END
 ------------------------------------
 
 /* ЗАПОЛНЕНИЕ ТАБЛИЦ */ -----------------------------------------------------------------------------------------------
@@ -895,32 +983,6 @@ VALUES
   (14, 10, 1),
   (15, 11, 2);
 
-INSERT INTO Acts (ActID, LibrarianID, SubscriptionID, ActionType, EventDate)
-VALUES 
-  (1, 1, 1, 'Issue', '2023-09-29'),
-  (2, 2, 2, 'Issue', '2023-09-29'),
-  (3, 3, 1, 'Return', '2023-09-30'),
-  (4, 1, 2, 'Return', '2023-10-10'),
-  (5, 3, 4, 'Issue', '2023-10-10'),
-  (6, 3, 4, 'Return', '2023-10-10'),
-  (7, 1, 5, 'Issue', '2023-10-11'),
-  (8, 2, 6, 'Issue', '2023-10-12'),
-  (9, 2, 6, 'Issue', '2023-10-13');
-
-INSERT INTO Acts_Books (Acts_BooksID, ActID, BookID)
-VALUES 
-  (1, 1, 3),
-  (2, 2, 4),
-  (3, 3, 3),
-  (4, 4, 4),
-  (5, 5, 7),
-  (6, 5, 11),
-  (7, 6, 11),
-  (8, 7, 8),
-  (9, 8, 3),
-  (10, 9, 1);
-
-
   ------------------------------------------------------------------------------------------------------
   /* ЗАПРОСЫ */
 
@@ -959,7 +1021,7 @@ JOIN Works_Genres ON Works_Books.WorkID = Works_Genres.WorkID
 JOIN Genres ON Works_Genres.GenreID = Genres.GenreID
 WHERE Genres.GenreName = 'Фэнтези';
 
- ---Выбрать администраторов, которые назначены также библиотекарями и вывести их фио---
+ ---Выбрать библиотекарей, которые назначены также администраторами и вывести их фио---
  SELECT Users.FirstName, Users.LastName, Users.MiddleName
 FROM Users
 JOIN Administrators ON Users.UserID = Administrators.UserID
@@ -1082,77 +1144,7 @@ RETURN (
 SELECT * FROM MostActiveReader();
 
 
----------------------------------------------------------------------------------------------------------------
-
-/* ПРОЦЕДУРЫ */
-
-
----- Добавление нового пользователя--------
-
-CREATE PROCEDURE AddUser
-    @LastName NVARCHAR(50),
-    @FirstName NVARCHAR(50),
-    @MiddleName NVARCHAR(50),
-    @UserPassword NVARCHAR(50)
-AS
-BEGIN
-    INSERT INTO Users (LastName, FirstName, MiddleName, UserPassword)
-    VALUES (@LastName, @FirstName, @MiddleName, @UserPassword);
-END;
-
-
------Удаление пользователя по идентификатору----
-
-CREATE PROCEDURE DeleteUser
-    @UserID INT
-AS
-BEGIN
-    DELETE FROM Users WHERE UserID = @UserID;
-END;
-
------Обновление данных пользователя-----------
-
-CREATE PROCEDURE UpdateUser
-    @UserID INT,
-    @LastName NVARCHAR(50),
-    @FirstName NVARCHAR(50),
-    @MiddleName NVARCHAR(50),
-    @UserPassword NVARCHAR(50)
-AS
-BEGIN
-    UPDATE Users
-    SET LastName = @LastName,
-        FirstName = @FirstName,
-        MiddleName = @MiddleName,
-        UserPassword = @UserPassword
-    WHERE UserID = @UserID;
-END;
-
------Получение списка всех пользователей------
-
-CREATE PROCEDURE GetAllUsers
-AS
-BEGIN
-    SELECT * FROM Users;
-END;
-
-
-
---------ВЫЗОВ ПРОЦЕДУР------------------
-
-
--- Добавление нового пользователя
-EXEC AddUser 'Алешин', 'Валерий', 'Александрович', 'wasd';
-
--- Удаление пользователя с UserID = 3
-EXEC DeleteUser 3;
-
--- Обновление данных пользователя с UserID = 2
-EXEC UpdateUser 2, 'Иванов', 'Петр', 'Иванович', 'newpassword1';
-
--- Получение списка всех пользователей
-EXEC GetAllUsers;
-
+--------------------------------------------------------------------------------------------------------------
 
 /* ТРИГГЕРЫ */
 
@@ -1192,7 +1184,23 @@ SELECT * FROM Shelves WHERE ShelfID = 2;
 
 DROP TRIGGER trg_CheckBorrowLimit;
 
-CREATE TRIGGER trg_CheckBorrowLimit
+CREATE TRIGGER CheckReaderBookLimit
+ON Acts
+AFTER INSERT
+AS
+BEGIN
+    DECLARE @SubscriptionID INT;
+    SELECT @SubscriptionID = SubscriptionID FROM inserted;
+
+    IF (SELECT COUNT(*) FROM Acts WHERE SubscriptionID = @SubscriptionID AND ActionType = 'Взял(а)') > 2
+    BEGIN
+        RAISERROR ('Читатель уже взял две книги. Пожалуйста, верните хотя бы одну из них, прежде чем брать другую.', 16, 1);
+        ROLLBACK TRANSACTION;
+    END
+END
+
+
+CREATE TRIGGER trg_CheckBorrowLimit ----старый----
 ON Acts_Books
 AFTER INSERT
 AS
@@ -1250,12 +1258,76 @@ END;
 INSERT INTO Subscriptions (SubscriptionID, LastName, FirstName, MiddleName, SubscriptionPasport, VisitorPhoneNumber, SubscriptionsType)
 VALUES (7, 'Иванов', 'Петр', NULL, '', '+375290493566', 'Взрослый');
 
+----------------Запрет на выдачу уже выданной копии книги --------
+CREATE TRIGGER CheckBookAvailability
+ON Acts_Books
+AFTER INSERT
+AS
+BEGIN
+    DECLARE @BookInventoryID INT;
+    SELECT @BookInventoryID = BookInventoryID FROM inserted;
+
+    IF EXISTS (SELECT 1 FROM Acts_Books WHERE BookInventoryID = @BookInventoryID AND ActID NOT IN (SELECT ActID FROM Acts WHERE ActionType = 'Вернул(а)'))
+    BEGIN
+        RAISERROR ('Эта книга находится у другого читателя. Пожалуйста, выберите другую.', 16, 1);
+        ROLLBACK TRANSACTION;
+    END
+END
 
 
 
 
+/* Триггер на отсутствие данных в пользователе */
 
+CREATE TRIGGER PreventEmptyUserData
+ON Users
+INSTEAD OF INSERT
+AS
+BEGIN
+    -- Check if any required fields are empty
+    IF EXISTS (
+        SELECT 1
+        FROM inserted
+        WHERE 
+            (LEN(ISNULL(LastName, '')) = 0 OR 
+            LEN(ISNULL(FirstName, '')) = 0 OR 
+            LEN(ISNULL(UserLogin, '')) = 0 OR 
+            LEN(ISNULL(UserPassword, '')) = 0) OR
+            (LEN(ISNULL(UserID, '')) = 0 AND (SELECT COUNT(*) FROM inserted) > 1)
+    )
+    BEGIN
+        RAISEERROR('Please provide values for LastName, FirstName, UserLogin, UserPassword, and Role.', 16, 1);
+        ROLLBACK;
+    END
+    ELSE
+    BEGIN
+        -- Proceed with the insert
+        INSERT INTO Users (LastName, FirstName, MiddleName, UserLogin, UserPassword)
+        SELECT LastName, FirstName, MiddleName, UserLogin, UserPassword
+        FROM inserted;
+        
+        -- Insert into Librarians or Administrators based on Role
+        DECLARE @UserID INT;
+        SET @UserID = SCOPE_IDENTITY();
 
+        IF EXISTS (SELECT * FROM inserted WHERE Role = 'Библиотекарь')
+        BEGIN
+            INSERT INTO Librarians (UserID)
+            VALUES (@UserID);
+        END
+        ELSE IF EXISTS (SELECT * FROM inserted WHERE Role = 'Администратор')
+        BEGIN
+            DECLARE @LibrarianID INT;
+            INSERT INTO Librarians (UserID)
+            VALUES (@UserID);
+
+            SET @LibrarianID = SCOPE_IDENTITY();
+
+            INSERT INTO Administrators (UserID, LibrarianID)
+            VALUES (@UserID, @LibrarianID);
+        END
+    END
+END
 
 
 

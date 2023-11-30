@@ -151,7 +151,7 @@ namespace Library
                 using (SqlConnection connection = new SqlConnection(connectionString))
                 {
                     connection.Open();
-                    string query = "SELECT LastName + ' ' + FirstName + ' ' + MiddleName AS AuthorName, AuthorID FROM Authors";
+                    string query = "SELECT ISNULL(LastName, '') + ' ' + ISNULL(FirstName, '') + ' ' + ISNULL(MiddleName, '') AS AuthorName, AuthorID FROM Authors";
                     using (SqlCommand command = new SqlCommand(query, connection))
                     {
                         using (SqlDataReader reader = command.ExecuteReader())
