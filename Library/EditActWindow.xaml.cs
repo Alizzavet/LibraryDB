@@ -35,19 +35,6 @@ namespace Library
             FillActionTypeComboBox(comboBoxActionType);
 
             this.actId = actId;
-
-            if (actId != null)
-            {
-                // Если передан actId, значит мы редактируем существующий акт.
-                // Загрузите данные акта и установите значения элементов управления.
-                LoadActData(actId.Value);
-            }
-        }
-
-        private void LoadActData(int actId)
-        {
-            // Загрузите данные акта из базы данных и установите значения элементов управления.
-            // ...
         }
 
         private void Save_Click(object sender, RoutedEventArgs e)

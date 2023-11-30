@@ -331,6 +331,7 @@ namespace Library
             if (currentTable == "Sections")
             {
                 dataAdapter = dbOps.FillDataGridForDisplay($"EXEC GetSectionsData", out dataTable);
+                dataGrid.Columns[2].Visibility = Visibility.Collapsed;
             }
             else if (currentTable == "Shelves")
             {
@@ -378,6 +379,7 @@ namespace Library
             }
             dataTable.TableName = currentTable;
             dataGrid.ItemsSource = dataTable.DefaultView;
+            dataGrid.Columns[0].Visibility = Visibility.Collapsed;
         }
     }
 

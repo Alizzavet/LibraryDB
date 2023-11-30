@@ -6,16 +6,51 @@
         xmlns:local="clr-namespace:Library"
         mc:Ignorable="d"
         Title="ActWindow" Height="450" Width="800">
+    <Window.Resources>
+        <Style x:Key="LibraryButtonStyle" TargetType="Button">
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <Border Background="{TemplateBinding Background}" 
+                        BorderBrush="{TemplateBinding BorderBrush}" 
+                        BorderThickness="1" 
+                        CornerRadius="5">
+                            <ContentPresenter HorizontalAlignment="Center" 
+                                      VerticalAlignment="Center" 
+                                      Margin="10"/>
+                        </Border>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+            <Setter Property="Background" Value="#3498DB"/>
+            <Setter Property="Foreground" Value="White"/>
+            <Setter Property="Cursor" Value="Hand"/>
+            <Style.Triggers>
+                <Trigger Property="IsMouseOver" Value="True">
+                    <Setter Property="Background" Value="#2980B9"/>
+                </Trigger>
+            </Style.Triggers>
+        </Style>
+    </Window.Resources>
     <Grid>
-        <DataGrid x:Name="dataGrid" IsReadOnly="True" HorizontalAlignment="Center" Margin="0,80,0,0" VerticalAlignment="Top" Height="477" Width="728">
-            <DataGrid.ContextMenu>
-                <ContextMenu>
-                    <MenuItem Header="Добавить" Click="Add_Click"/>
-                    <MenuItem Header="Редактировать" Click="Edit_Click"/>
-                    <MenuItem Header="Удалить" Click="Delete_Click"/>
-                </ContextMenu>
-            </DataGrid.ContextMenu>
-        </DataGrid>
-        <Button Content="Загрузить данные" HorizontalAlignment="Center" Margin="0,41,0,0" VerticalAlignment="Top" Width="120" Click="LoadData_Click"/>
+        <Button x:Name="BackButton" Content="Назад" Style="{StaticResource LibraryButtonStyle}" HorizontalAlignment="Left" Margin="417,368,0,0" VerticalAlignment="Top" Width="105" Click="BackToAdminWindow_Click" Height="38" RenderTransformOrigin="-9.172,5.57" />
+        <Button Content="Загрузить данные" Style="{StaticResource LibraryButtonStyle}" Margin="181,368,444,0" VerticalAlignment="Top" Click="LoadData_Click"/>
+
+        <Border Background="#2C3E50" Height="50" VerticalAlignment="Top">
+            <TextBlock Text="Акты" Foreground="White" VerticalAlignment="Center" HorizontalAlignment="Center" FontSize="20"/>
+        </Border>
+
+        <StackPanel Margin="10,70,10,65">
+            <DataGrid x:Name="dataGrid" IsReadOnly="True" HorizontalAlignment="Center" Height="288" Width="760">
+                <DataGrid.ContextMenu>
+                    <ContextMenu>
+                        <MenuItem Header="Добавить" Click="Add_Click"/>
+                        <MenuItem Header="Редактировать" Click="Edit_Click"/>
+                        <MenuItem Header="Удалить" Click="Delete_Click"/>
+                    </ContextMenu>
+                </DataGrid.ContextMenu>
+            </DataGrid>
+
+        </StackPanel>
     </Grid>
 </Window>

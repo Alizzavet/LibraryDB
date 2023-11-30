@@ -6,18 +6,61 @@
         xmlns:local="clr-namespace:Library"
         mc:Ignorable="d"
         Title="LibraryWindow" Height="450" Width="800">
+    <Window.Resources>
+        <Style x:Key="LibraryButtonStyle" TargetType="Button">
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <Border Background="{TemplateBinding Background}" 
+                        BorderBrush="{TemplateBinding BorderBrush}" 
+                        BorderThickness="1" 
+                        CornerRadius="5">
+                            <ContentPresenter HorizontalAlignment="Center" 
+                                      VerticalAlignment="Center" 
+                                      Margin="10"/>
+                        </Border>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+            <Setter Property="Background" Value="#3498DB"/>
+            <Setter Property="Foreground" Value="White"/>
+            <Setter Property="Cursor" Value="Hand"/>
+            <Style.Triggers>
+                <Trigger Property="IsMouseOver" Value="True">
+                    <Setter Property="Background" Value="#2980B9"/>
+                </Trigger>
+            </Style.Triggers>
+        </Style>
+
+    </Window.Resources>
     <Grid>
-        <Button x:Name="btnLibraryEvents" Content="Мероприятия" HorizontalAlignment="Left" Margin="10,10,0,0" VerticalAlignment="Top" Width="75" Click="btnLibraryEvents_Click"/>
-        <Button x:Name="btnSubscriptions" Content="Абонементы" HorizontalAlignment="Left" Margin="10,50,0,0" VerticalAlignment="Top" Width="75" Click="btnSubscriptions_Click"/>
-        <Button x:Name="RegisterActs" Content="Оформить выдачу/возврат" HorizontalAlignment="Left" Margin="543,363,0,0" VerticalAlignment="Top" Width="204" Height="35" Click="btnExecutionAct_Click"/>
-        <DataGrid x:Name="dataGrid" IsReadOnly="True" HorizontalAlignment="Left" Margin="122,10,0,0" VerticalAlignment="Top" Height="313" Width="653">
-            <DataGrid.ContextMenu>
-                <ContextMenu>
-                    <MenuItem Header="Добавить" Click="Add_Click"/>
-                    <MenuItem Header="Редактировать" Click="Edit_Click"/>
-                    <MenuItem Header="Удалить" Click="Delete_Click"/>
-                </ContextMenu>
-            </DataGrid.ContextMenu>
-        </DataGrid>
+        <!-- Header -->
+        <ScrollViewer VerticalScrollBarVisibility="Auto">
+            <StackPanel Orientation="Vertical" Margin="10,70,0,0" HorizontalAlignment="Left">
+                <Button x:Name="btnLibraryEvents" Content="Мероприятия" Width="120" Margin="0,10,0,10" Style="{StaticResource LibraryButtonStyle}" Click="btnLibraryEvents_Click"/>
+                <Button x:Name="btnSubscriptions" Content="Абонементы" Width="120" Margin="0,10,0,10" Style="{StaticResource LibraryButtonStyle}" Click="btnSubscriptions_Click"/>
+                <Button x:Name="RegisterActs" Content="Зарегистрировать акт" Width="120" Margin="0,10,0,10" Style="{StaticResource LibraryButtonStyle}" Click="btnExecutionAct_Click"/>
+            </StackPanel>
+        </ScrollViewer>
+
+        <!-- Header -->
+        <Border Background="#2C3E50" Height="50" VerticalAlignment="Top">
+            <TextBlock Text="Library Administration" Foreground="White" VerticalAlignment="Center" HorizontalAlignment="Center" FontSize="20"/>
+        </Border>
+
+
+
+        <!-- Main Content Area -->
+        <Border BorderBrush="#BDC3C7" BorderThickness="0,1,0,0" Margin="150,70,10,10" Padding="10">
+            <DataGrid x:Name="dataGrid" IsReadOnly="True">
+                <DataGrid.ContextMenu>
+                    <ContextMenu>
+                        <MenuItem Header="Добавить" Click="Add_Click"/>
+                        <MenuItem Header="Редактировать" Click="Edit_Click"/>
+                        <MenuItem Header="Удалить" Click="Delete_Click"/>
+                    </ContextMenu>
+                </DataGrid.ContextMenu>
+            </DataGrid>
+        </Border>
     </Grid>
 </Window>

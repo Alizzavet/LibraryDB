@@ -5,12 +5,47 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:Library"
         mc:Ignorable="d"
-         Title="Вход в систему" Height="300" Width="400">
+        Title="Вход в систему" Height="300" Width="400">
+    <Window.Resources>
+        <Style x:Key="LibraryButtonStyle" TargetType="Button">
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <Border Background="{TemplateBinding Background}" 
+                        BorderBrush="{TemplateBinding BorderBrush}" 
+                        BorderThickness="1" 
+                        CornerRadius="5">
+                            <ContentPresenter HorizontalAlignment="Center" 
+                                      VerticalAlignment="Center" 
+                                      Margin="10"/>
+                        </Border>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+            <Setter Property="Background" Value="#3498DB"/>
+            <Setter Property="Foreground" Value="White"/>
+            <Setter Property="Cursor" Value="Hand"/>
+            <Style.Triggers>
+                <Trigger Property="IsMouseOver" Value="True">
+                    <Setter Property="Background" Value="#2980B9"/>
+                </Trigger>
+            </Style.Triggers>
+        </Style>
+    </Window.Resources>
     <Grid>
-        <Label Content="Логин:" HorizontalAlignment="Left" Margin="10,10,0,0" VerticalAlignment="Top"/>
-        <TextBox x:Name="txtUsername" Text ="FilanenkoAdmin" HorizontalAlignment="Left" Height="23" Margin="70,12,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="120"/>
-        <Label Content="Пароль:" HorizontalAlignment="Left" Margin="10,50,0,0" VerticalAlignment="Top"/>
-        <PasswordBox x:Name="txtPassword" Password = "l6w2ynvpebof_hIq54fg" HorizontalAlignment="Left" Margin="70,52,0,0" VerticalAlignment="Top" Width="120"/>
-        <Button x:Name="btnSubmit" Content="Войти" HorizontalAlignment="Left" Margin="70,100,0,0" VerticalAlignment="Top" Width="75" Click="btnSubmit_Click"/>
+        <Border Background="#2C3E50" Height="50" VerticalAlignment="Top">
+            <TextBlock Text="Вход в систему" Foreground="White" VerticalAlignment="Center" HorizontalAlignment="Center" FontSize="20"/>
+        </Border>
+
+        <ScrollViewer VerticalScrollBarVisibility="Auto">
+            <StackPanel Margin="10,50,10,10">
+                <!-- Здесь добавлен верхний отступ -->
+                <Label Content="Логин:" HorizontalAlignment="Left" VerticalAlignment="Top"/>
+                <TextBox x:Name="txtUsername" Text="FilanenkoAdmin" HorizontalAlignment="Left" Height="23" TextWrapping="Wrap" VerticalAlignment="Top" Width="120"/>
+                <Label Content="Пароль:" HorizontalAlignment="Left" Margin="0,20,0,0" VerticalAlignment="Top"/>
+                <PasswordBox x:Name="txtPassword" Password="l6w2ynvpebof_hIq54fg" HorizontalAlignment="Left" Margin="0,5,0,0" VerticalAlignment="Top" Width="120"/>
+                <Button x:Name="btnSubmit" Content="Войти" Width="120" Style="{StaticResource LibraryButtonStyle}" Click="btnSubmit_Click"/>
+            </StackPanel>
+        </ScrollViewer>
     </Grid>
 </Window>

@@ -87,6 +87,12 @@ namespace Library
                 dataGrid.ItemsSource = dataTable.DefaultView;
             }
         }
-    }
 
+        private void BackToAdminWindow_Click(object sender, RoutedEventArgs e)
+        {
+            AdminWindow adminWindow = new AdminWindow();
+            adminWindow.Show();
+            this.Close();
+        }
+    }
 }

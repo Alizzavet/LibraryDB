@@ -3,9 +3,36 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:wpftoolkit="http://schemas.microsoft.com/wpf/2008/toolkit"
         xmlns:local="clr-namespace:Library"
         mc:Ignorable="d"
-        Title="EditActWindow" Height="450" Width="800">
+        Title="EditActWindow" Height="350" Width="350">
+    <Window.Resources>
+        <Style x:Key="LibraryButtonStyle" TargetType="Button">
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <Border Background="{TemplateBinding Background}" 
+                        BorderBrush="{TemplateBinding BorderBrush}" 
+                        BorderThickness="1" 
+                        CornerRadius="5">
+                            <ContentPresenter HorizontalAlignment="Center" 
+                                      VerticalAlignment="Center" 
+                                      Margin="10"/>
+                        </Border>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+            <Setter Property="Background" Value="#3498DB"/>
+            <Setter Property="Foreground" Value="White"/>
+            <Setter Property="Cursor" Value="Hand"/>
+            <Style.Triggers>
+                <Trigger Property="IsMouseOver" Value="True">
+                    <Setter Property="Background" Value="#2980B9"/>
+                </Trigger>
+            </Style.Triggers>
+        </Style>
+    </Window.Resources>
     <Grid>
         <Label Content="Библиотекарь:" HorizontalAlignment="Left" Margin="10,10,0,0" VerticalAlignment="Top"/>
         <ComboBox x:Name="comboBoxLibrarians" HorizontalAlignment="Left" Margin="10,30,0,0" VerticalAlignment="Top" Width="120"/>
@@ -22,6 +49,6 @@
         <Label Content="Инвентаризация:" HorizontalAlignment="Left" Margin="10,210,0,0" VerticalAlignment="Top"/>
         <ComboBox x:Name="comboBoxInventorisation" HorizontalAlignment="Left" Margin="10,230,0,0" VerticalAlignment="Top" Width="120"/>
 
-        <Button Content="Сохранить" HorizontalAlignment="Right" Margin="0,10,10,0" VerticalAlignment="Top" Width="75" Click="Save_Click"/>
+        <Button Content="Сохранить" Style="{StaticResource LibraryButtonStyle}" HorizontalAlignment="Center" Margin="0,271,0,0" VerticalAlignment="Top" Width="100" Click="Save_Click"/>
     </Grid>
 </Window>
