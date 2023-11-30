@@ -134,6 +134,13 @@ namespace Library
             }
         }
 
+        private void DemonstrationButton_Click(object sender, RoutedEventArgs e)
+        {
+            DemonstrationWindow demonstrationWindow = new DemonstrationWindow();
+            demonstrationWindow.Show();
+        }
+
+
         private void DataView()
         {
             if (currentTable == "Acts")

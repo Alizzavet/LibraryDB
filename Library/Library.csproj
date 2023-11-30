@@ -78,6 +78,10 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Page Include="DemonstrationWindow.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="EditActWindow.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -114,6 +118,9 @@
     </Compile>
     <Compile Include="ComboBoxHelper.cs" />
     <Compile Include="DatabaseOperations.cs" />
+    <Compile Include="DemonstrationWindow.xaml.cs">
+      <DependentUpon>DemonstrationWindow.xaml</DependentUpon>
+    </Compile>
     <Compile Include="EditActWindow.xaml.cs">
       <DependentUpon>EditActWindow.xaml</DependentUpon>
     </Compile>

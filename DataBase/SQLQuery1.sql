@@ -1207,5 +1207,27 @@ END
 
 
 
+----------------------------- «¿œ–Œ—€ -----------------------------------
 
+CREATE PROCEDURE GetBooksByYear
+    @Year INT
+AS
+BEGIN
+    SELECT BookName
+    FROM Books
+    WHERE YEAR(PublisherDate) = @Year;
+END
+
+CREATE PROCEDURE GetBooksByGenre
+    @Genre NVARCHAR(50)
+AS
+BEGIN
+    SELECT DISTINCT B.BookName
+    FROM Books B
+    JOIN Works_Books WB ON B.BookID = WB.BookID
+    JOIN Works W ON WB.WorkID = W.WorkID
+    JOIN Works_Genres WG ON W.WorkID = WG.WorkID
+    JOIN Genres G ON WG.GenreID = G.GenreID
+    WHERE G.GenreName = @Genre;
+END
 

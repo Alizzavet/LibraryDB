@@ -49,10 +49,10 @@
         </Border>
 
         <Button x:Name="btnExit" Content="Выход" Width="80" Style="{StaticResource LibraryButtonStyle}" Click="btnExit_Click" VerticalAlignment="Top" HorizontalAlignment="Right" Margin="0,6,27,0"/>
-
+        <Button x:Name="DemonstrationButton" Content="Запросы" Width="79" Style="{StaticResource LibraryButtonStyle}" Click="DemonstrationButton_Click" VerticalAlignment="Top" HorizontalAlignment="Right" Margin="0,6,126,0"/>
         <!-- Main Content Area -->
         <Border BorderBrush="#BDC3C7" BorderThickness="0,1,0,0" Margin="150,70,10,10" Padding="10">
-            <DataGrid x:Name="dataGrid" IsReadOnly="True">
+            <DataGrid x:Name="dataGrid" IsReadOnly="True" Cursor="">
                 <DataGrid.ContextMenu>
                     <ContextMenu>
                         <MenuItem Header="Добавить" Click="Add_Click"/>
