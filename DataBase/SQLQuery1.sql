@@ -585,6 +585,7 @@ BEGIN
         Publishers ON Books_Publishers.PublisherID = Publishers.PublisherID;
 END
 -------------------------------------
+drop table Acts;
 CREATE TABLE Acts (
 	ActID INT IDENTITY(1,1) PRIMARY KEY,
 	LibrarianID INT, FOREIGN KEY (LibrarianID) REFERENCES Librarians(LibrarianID) ON DELETE CASCADE,
@@ -716,7 +717,7 @@ BEGIN
         Books ON BooksInventorisation.BookID = Books.BookID;
 END
 ----------------------------------------
-
+drop table Acts_Books;
 CREATE TABLE Acts_Books (
 	Acts_BooksID INT IDENTITY(1,1) PRIMARY KEY,
 	BookInventoryID INT, FOREIGN KEY (BookInventoryID) REFERENCES BooksInventorisation(BookInventoryID) ON DELETE CASCADE,
@@ -1148,133 +1149,6 @@ SELECT * FROM MostActiveReader();
 
 /* ТРИГГЕРЫ */
 
----------Триггер для количества книг на полке после добавления или удаления ----------
-
-ALTER TABLE Shelves
-ADD BookCount INT;
-
-CREATE TRIGGER UpdateShelfBookCount
-ON Books_Shelves
-AFTER INSERT, DELETE
-AS
-BEGIN
-    UPDATE Shelves
-    SET BookCount = (
-        SELECT COUNT(*)
-        FROM Books_Shelves
-        WHERE Books_Shelves.ShelfID = Shelves.ShelfID
-    )
-    FROM Shelves
-    INNER JOIN Sections ON Shelves.SectionID = Sections.SectionID
-    INNER JOIN LibraryRooms ON Sections.LibraryRoomID = LibraryRooms.LibraryRoomID
-    WHERE LibraryRooms.LibraryRoomName = 'Читальный зал';
-END;
-
----Добавим книгу в читальный зал----
-INSERT INTO Books_Shelves (Books_ShelvesID, BookID, ShelfID)
-VALUES (16, 10, 2);
-
----  Проверим их количество --- 
-SELECT * FROM Shelves WHERE ShelfID = 2;
-
-
-
-
--------- Проверка на лимит книг выдаче читателю, если он не сдал хотя бы одну  -----
-
-DROP TRIGGER trg_CheckBorrowLimit;
-
-CREATE TRIGGER CheckReaderBookLimit
-ON Acts
-AFTER INSERT
-AS
-BEGIN
-    DECLARE @SubscriptionID INT;
-    SELECT @SubscriptionID = SubscriptionID FROM inserted;
-
-    IF (SELECT COUNT(*) FROM Acts WHERE SubscriptionID = @SubscriptionID AND ActionType = 'Взял(а)') > 2
-    BEGIN
-        RAISERROR ('Читатель уже взял две книги. Пожалуйста, верните хотя бы одну из них, прежде чем брать другую.', 16, 1);
-        ROLLBACK TRANSACTION;
-    END
-END
-
-
-CREATE TRIGGER trg_CheckBorrowLimit ----старый----
-ON Acts_Books
-AFTER INSERT
-AS
-BEGIN
-    DECLARE @ActID INT;
-    SELECT @ActID = ActID FROM inserted;
-
-    DECLARE @SubscriptionID INT;
-    SELECT @SubscriptionID = SubscriptionID FROM Acts WHERE ActID = @ActID;
-
-    IF (SELECT COUNT(*) FROM Acts WHERE SubscriptionID = @SubscriptionID AND ActionType = 'Issue' AND EventDate > (SELECT ISNULL(MAX(EventDate), '1900-01-01') FROM Acts WHERE ActionType = 'Return' AND SubscriptionID = @SubscriptionID)) > 2
-    BEGIN
-        THROW 51000, 'Читатель уже взял 2 книги и не может взять больше, пока не вернет хотя бы одну из них.', 1;
-    END
-END;
-
-
---- Пытаемся дать пользователю книгу, но он уже взял 2 и не вернул ---
-
-INSERT INTO Acts (ActID, LibrarianID, SubscriptionID, ActionType, EventDate)
-VALUES (11, 2, 6, 'Issue', '2023-10-25');
-
-INSERT INTO Acts_Books (Acts_BooksID, BookID, ActID)
-VALUES (12, 5, 11);
-
-
-
---------Запрет на создание пользователя без паспортных данных и абонемента------
-
-CREATE TRIGGER CheckSubscriptionFields
-ON Subscriptions
-INSTEAD OF INSERT
-AS
-BEGIN
-    IF EXISTS (
-        SELECT 1
-        FROM inserted
-        WHERE (VisitorPhoneNumber IS NULL OR VisitorPhoneNumber = '')
-           OR (SubscriptionsType NOT IN ('Взрослый', 'Детский', 'Льготный'))
-           OR (SubscriptionPasport IS NULL OR SubscriptionPasport = '')
-    )
-    BEGIN
-        THROW 51000, 'Введите тип абонемента и данные паспорта перед добавлением нового пользователя.', 1;
-    END
-    ELSE
-    BEGIN
-        INSERT INTO Subscriptions (SubscriptionID, LastName, FirstName, MiddleName, SubscriptionPasport, VisitorPhoneNumber, SubscriptionsType)
-        SELECT SubscriptionID, LastName, FirstName, MiddleName, SubscriptionPasport, VisitorPhoneNumber, SubscriptionsType
-        FROM inserted;
-    END
-END;
-
-
--- Пример вставки с недостаточными данными абонемента
-INSERT INTO Subscriptions (SubscriptionID, LastName, FirstName, MiddleName, SubscriptionPasport, VisitorPhoneNumber, SubscriptionsType)
-VALUES (7, 'Иванов', 'Петр', NULL, '', '+375290493566', 'Взрослый');
-
-----------------Запрет на выдачу уже выданной копии книги --------
-CREATE TRIGGER CheckBookAvailability
-ON Acts_Books
-AFTER INSERT
-AS
-BEGIN
-    DECLARE @BookInventoryID INT;
-    SELECT @BookInventoryID = BookInventoryID FROM inserted;
-
-    IF EXISTS (SELECT 1 FROM Acts_Books WHERE BookInventoryID = @BookInventoryID AND ActID NOT IN (SELECT ActID FROM Acts WHERE ActionType = 'Вернул(а)'))
-    BEGIN
-        RAISERROR ('Эта книга находится у другого читателя. Пожалуйста, выберите другую.', 16, 1);
-        ROLLBACK TRANSACTION;
-    END
-END
-
-
 
 
 /* Триггер на отсутствие данных в пользователе */
@@ -1292,11 +1166,10 @@ BEGIN
             (LEN(ISNULL(LastName, '')) = 0 OR 
             LEN(ISNULL(FirstName, '')) = 0 OR 
             LEN(ISNULL(UserLogin, '')) = 0 OR 
-            LEN(ISNULL(UserPassword, '')) = 0) OR
-            (LEN(ISNULL(UserID, '')) = 0 AND (SELECT COUNT(*) FROM inserted) > 1)
+            LEN(ISNULL(UserPassword, '')) = 0)
     )
     BEGIN
-        RAISEERROR('Please provide values for LastName, FirstName, UserLogin, UserPassword, and Role.', 16, 1);
+        THROW 50000, 'Please provide values for LastName, FirstName, UserLogin, and UserPassword.', 1;
         ROLLBACK;
     END
     ELSE
@@ -1306,16 +1179,16 @@ BEGIN
         SELECT LastName, FirstName, MiddleName, UserLogin, UserPassword
         FROM inserted;
         
-        -- Insert into Librarians or Administrators based on Role
+        -- Insert into Librarians or Administrators
         DECLARE @UserID INT;
         SET @UserID = SCOPE_IDENTITY();
 
-        IF EXISTS (SELECT * FROM inserted WHERE Role = 'Библиотекарь')
+        IF EXISTS (SELECT * FROM inserted WHERE EXISTS (SELECT 1 FROM inserted WHERE UserID = @UserID))
         BEGIN
             INSERT INTO Librarians (UserID)
             VALUES (@UserID);
         END
-        ELSE IF EXISTS (SELECT * FROM inserted WHERE Role = 'Администратор')
+        ELSE
         BEGIN
             DECLARE @LibrarianID INT;
             INSERT INTO Librarians (UserID)
@@ -1328,6 +1201,9 @@ BEGIN
         END
     END
 END
+
+
+
 
 
 

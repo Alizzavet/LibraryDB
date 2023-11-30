@@ -39,6 +39,13 @@ namespace Library
 
         private void Save_Click(object sender, RoutedEventArgs e)
         {
+            if (comboBoxLibrarians.SelectedItem == null || comboBoxSubscriptions.SelectedItem == null ||
+        comboBoxActionType.SelectedItem == null || datePickerEventDate.SelectedDate == null ||
+        comboBoxInventorisation.SelectedItem == null)
+            {
+                MessageBox.Show("Пожалуйста, заполните все поля перед сохранением.");
+                return;
+            }
             int librarianId = ((KeyValuePair<int, string>)comboBoxLibrarians.SelectedItem).Key;
             int subscriptionId = ((KeyValuePair<int, string>)comboBoxSubscriptions.SelectedItem).Key;
             int actionType = ((KeyValuePair<int, string>)comboBoxActionType.SelectedItem).Key;
@@ -50,6 +57,30 @@ namespace Library
                 {
                     connection.Open();
                     SqlCommand command;
+
+                    // Проверка доступности книги перед добавлением нового акта
+                    if (actionType == 1) // Взял(а)
+                    {
+                        command = new SqlCommand("SELECT COUNT(*) FROM Acts_Books ab INNER JOIN Acts a ON ab.ActID = a.ActID WHERE ab.BookInventoryID = @BookInventoryID AND a.ActionType = 1 AND NOT EXISTS (SELECT 1 FROM Acts_Books ab2 INNER JOIN Acts a2 ON ab2.ActID = a2.ActID WHERE ab2.BookInventoryID = ab.BookInventoryID AND a2.ActionType = 0)", connection);
+                        command.Parameters.AddWithValue("@BookInventoryID", bookInventoryId);
+                        int count = (int)command.ExecuteScalar();
+                        if (count > 0)
+                        {
+                            MessageBox.Show("Книга уже взята и еще не вернули.");
+                            return;
+                        }
+                    }
+                    else if (actionType == 0) // Вернул(а)
+                    {
+                        command = new SqlCommand("SELECT COUNT(*) FROM Acts_Books ab INNER JOIN Acts a ON ab.ActID = a.ActID WHERE ab.BookInventoryID = @BookInventoryID AND a.ActionType = 1 AND NOT EXISTS (SELECT 1 FROM Acts_Books ab2 INNER JOIN Acts a2 ON ab2.ActID = a2.ActID WHERE ab2.BookInventoryID = ab.BookInventoryID AND a2.ActionType = 0)", connection);
+                        command.Parameters.AddWithValue("@BookInventoryID", bookInventoryId);
+                        int count = (int)command.ExecuteScalar();
+                        if (count == 0)
+                        {
+                            MessageBox.Show("Книга еще не была взята.");
+                            return;
+                        }
+                    }
 
                     if (actId == null)
                     {
@@ -78,19 +109,18 @@ namespace Library
             }
             catch (SqlException ex)
             {
-                if (ex.Number == 50000) // номер ошибки, который мы указали в RAISERROR
+                if (ex.Number == 51000)
                 {
-                    MessageBox.Show(ex.Message);
+                    MessageBox.Show($"{ex.Message}");
                 }
                 else
                 {
                     throw;
                 }
             }
-
-            // Закрыть это окно
             this.Close();
         }
+
 
         public void FillLibrariansComboBox(ComboBox comboBoxLibrarians)
         {
