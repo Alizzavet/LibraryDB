@@ -89,9 +89,18 @@ namespace Library
 
         private void BackToAdminWindow_Click(object sender, RoutedEventArgs e)
         {
-            AdminWindow adminWindow = new AdminWindow();
-            adminWindow.Show();
-            this.Close();
+            if(MainWindow.IsAdmin == false)
+            {
+                LibraryWindow libraryWindow = new LibraryWindow();
+                libraryWindow.Show();
+                Close();
+            }
+            else
+            {
+                AdminWindow adminWindow = new AdminWindow();
+                adminWindow.Show();
+                this.Close();
+            }
         }
     }
 }

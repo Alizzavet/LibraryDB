@@ -21,9 +21,11 @@ namespace Library
     /// </summary>
     public partial class MainWindow : Window
     {
+        public static bool IsAdmin;
         public MainWindow()
         {
             InitializeComponent();
+            IsAdmin = false;
         }
 
         private void btnSubmit_Click(object sender, RoutedEventArgs e)
@@ -44,6 +46,7 @@ namespace Library
                             MessageBox.Show($"Добро пожаловать, {reader["FirstName"]} {reader["MiddleName"]} {reader["LastName"]} ! Вы вошли как администратор.");
                             AdminWindow adminWindow = new AdminWindow();
                             adminWindow.Show();
+                            IsAdmin = true;
                             this.Close();
                             return;
                         }
@@ -62,6 +65,7 @@ namespace Library
                             MessageBox.Show($"Добро пожаловать, {reader["FirstName"]} {reader["MiddleName"]} {reader["LastName"]}! Вы вошли как библиотекарь.");
                             LibraryWindow libraryWindow = new LibraryWindow();
                             libraryWindow.Show();
+                            IsAdmin = false;
                             this.Close();
                             return;
                         }
