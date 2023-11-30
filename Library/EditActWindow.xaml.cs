@@ -57,32 +57,48 @@ namespace Library
             int actionType = ((KeyValuePair<int, string>)comboBoxActionType.SelectedItem).Key;
             DateTime eventDate = datePickerEventDate.SelectedDate.Value;
             int bookInventoryId = ((KeyValuePair<int, string>)comboBoxInventorisation.SelectedItem).Key;
-
-            using (SqlConnection connection = new SqlConnection(connectionString))
+            try
             {
-                connection.Open();
-                SqlCommand command;
-
-                if (actId == null)
+                using (SqlConnection connection = new SqlConnection(connectionString))
                 {
-                    // Добавить новый акт
-                    command = new SqlCommand("AddAct", connection);
+                    connection.Open();
+                    SqlCommand command;
+
+                    if (actId == null)
+                    {
+                        // Добавить новый акт
+                        command = new SqlCommand("AddAct", connection);
+                    }
+                    else
+                    {
+                        // Редактировать существующий акт
+                        command = new SqlCommand("EditAct", connection);
+                        command.Parameters.AddWithValue("@ActID", actId.Value);
+                    }
+
+                    command.CommandType = CommandType.StoredProcedure;
+                    command.Parameters.AddWithValue("@LibrarianID", librarianId);
+                    command.Parameters.AddWithValue("@SubscriptionID", subscriptionId);
+                    command.Parameters.AddWithValue("@ActionType", actionType);
+                    command.Parameters.AddWithValue("@EventDate", eventDate);
+                    command.Parameters.AddWithValue("@BookInventoryID", bookInventoryId);
+
+                    command.ExecuteNonQuery();
+                }
+
+                // Закрыть это окно
+                this.Close();
+            }
+            catch (SqlException ex)
+            {
+                if (ex.Number == 50000) // номер ошибки, который мы указали в RAISERROR
+                {
+                    MessageBox.Show(ex.Message);
                 }
                 else
                 {
-                    // Редактировать существующий акт
-                    command = new SqlCommand("EditAct", connection);
-                    command.Parameters.AddWithValue("@ActID", actId.Value);
+                    throw;
                 }
-
-                command.CommandType = CommandType.StoredProcedure;
-                command.Parameters.AddWithValue("@LibrarianID", librarianId);
-                command.Parameters.AddWithValue("@SubscriptionID", subscriptionId);
-                command.Parameters.AddWithValue("@ActionType", actionType);
-                command.Parameters.AddWithValue("@EventDate", eventDate);
-                command.Parameters.AddWithValue("@BookInventoryID", bookInventoryId);
-
-                command.ExecuteNonQuery();
             }
 
             // Закрыть это окно
