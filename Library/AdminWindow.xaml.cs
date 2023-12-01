@@ -314,8 +314,13 @@ namespace Library
                 if (dataGrid.SelectedItem is DataRowView rowView)
                 {
                     DataRow row = rowView.Row;
-                    int id = (int)row[0]; // Получаем ID строки здесь
-                    dbOps.DeleteRow(row, editDataTable, dataAdapter, currentTable, dataGrid);
+                    int id = (int)row[0];
+                    MessageBoxResult result = MessageBox.Show("Are you sure you want to delete this item?", "Confirmation", MessageBoxButton.YesNo, MessageBoxImage.Question);
+
+                    if (result == MessageBoxResult.Yes)
+                    {
+                        dbOps.DeleteRow(row, editDataTable, dataAdapter, currentTable, dataGrid);
+                    }
                 }
             }
             catch (Exception ex)

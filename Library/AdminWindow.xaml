@@ -62,7 +62,7 @@
                 <Button x:Name="btnPublishers" Content="Издатели" Width="120" Margin="0,10,0,10" Style="{StaticResource LibraryButtonStyle}" Click="btnPublishers_Click"/>
                 <Button x:Name="btnBooksPublishers" Content="Издетели книг" Width="120" Margin="0,10,0,10" Style="{StaticResource LibraryButtonStyle}" Click="btnBooksPublishers_Click"/>
                 <Button x:Name="btnInventory" Content="Инвентаризация" Width="120" Margin="0,10,0,10" Style="{StaticResource LibraryButtonStyle}" Click="btnInventory_Click"/>
-                <Button x:Name="RegisterActs" Content="Зарегистрировать акт" Width="120" Margin="0,10,0,10" Style="{StaticResource LibraryButtonStyle}" Click="btnExecutionAct_Click"/>
+                <Button x:Name="RegisterActs" Content="Зарегистрировать акт" Width="127" Margin="0,10,0,10" Style="{StaticResource LibraryButtonStyle}" Click="btnExecutionAct_Click"/>
                 <Button x:Name="AddUsers" Content="Пользователи" Width="120" Margin="0,10,0,10" Style="{StaticResource LibraryButtonStyle}" Click="btnEditUsers_Click"/>
             </StackPanel>
         </ScrollViewer>

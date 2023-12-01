@@ -41,9 +41,9 @@
             <StackPanel Margin="10,50,10,10">
                 <!-- Здесь добавлен верхний отступ -->
                 <Label Content="Логин:" HorizontalAlignment="Left" VerticalAlignment="Top"/>
-                <TextBox x:Name="txtUsername" Text="PetrovLibra" HorizontalAlignment="Left" Height="23" TextWrapping="Wrap" VerticalAlignment="Top" Width="120"/>
+                <TextBox x:Name="txtUsername" Text="SidorovaLibra" HorizontalAlignment="Left" Height="23" TextWrapping="Wrap" VerticalAlignment="Top" Width="120"/>
                 <Label Content="Пароль:" HorizontalAlignment="Left" Margin="0,20,0,0" VerticalAlignment="Top"/>
-                <PasswordBox x:Name="txtPassword" Password="securepass" HorizontalAlignment="Left" Margin="0,5,0,0" VerticalAlignment="Top" Width="120"/>
+                <PasswordBox x:Name="txtPassword" Password="123456" HorizontalAlignment="Left" Margin="0,5,0,0" VerticalAlignment="Top" Width="120"/>
                 <Button x:Name="btnSubmit" Content="Войти" Width="120" Style="{StaticResource LibraryButtonStyle}" Click="btnSubmit_Click"/>
             </StackPanel>
         </ScrollViewer>

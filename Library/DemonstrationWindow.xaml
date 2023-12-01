@@ -6,20 +6,70 @@
         xmlns:local="clr-namespace:Library"
         mc:Ignorable="d"
         Title="DemonstrationWindow" Height="450" Width="800">
+    <Window.Resources>
+        <!-- Your button style remains unchanged -->
+        <Style x:Key="DemonstrationButtonStyle" TargetType="Button">
+            <!-- ... your existing style ... -->
+        </Style>
+
+        <!-- Style for the buttons with margin -->
+        <Style x:Key="DemonstrationButtonWithMarginStyle" TargetType="Button">
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <Border Background="{TemplateBinding Background}" 
+                                BorderBrush="{TemplateBinding BorderBrush}" 
+                                BorderThickness="1" 
+                                CornerRadius="5" Margin="0,0,0,30">
+                            <ContentPresenter HorizontalAlignment="Center" 
+                                              VerticalAlignment="Center" 
+                                              Margin="10"/>
+                        </Border>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+            <Setter Property="Background" Value="#3498DB"/>
+            <Setter Property="Foreground" Value="White"/>
+            <Setter Property="Cursor" Value="Hand"/>
+            <Setter Property="ContentTemplate">
+                <Setter.Value>
+                    <DataTemplate>
+                        <TextBlock Text="{Binding}" TextWrapping="Wrap" TextAlignment="Center"/>
+                    </DataTemplate>
+                </Setter.Value>
+            </Setter>
+            <Style.Triggers>
+                <Trigger Property="IsMouseOver" Value="True">
+                    <Setter Property="Background" Value="#2980B9"/>
+                </Trigger>
+            </Style.Triggers>
+        </Style>
+    </Window.Resources>
     <Grid>
-        <StackPanel>
-            <TextBox Name="YearTextBox" Text="Введите год" GotFocus="TextBox_GotFocus" LostFocus="TextBox_LostFocus"/>
-            <Button Name="ShowYearButton" Content="Показать" Click="ShowYearButton_Click" />
-            <TextBox Name="GenreTextBox" Text="Введите жанр" GotFocus="TextBox_GotFocus" LostFocus="TextBox_LostFocus"/>
-            <Button Name="ShowGenreButton" Content="Показать" Click="ShowGenreButton_Click" />
-            <ComboBox Name="LibrarianComboBox" />
-            <DatePicker Name="StartDatePicker" />
-            <DatePicker Name="EndDatePicker" />
-            <Button Name="ShowReadersButton" Content="Показать читателей" Click="ShowReadersButton_Click" />
-            <DatePicker Name="FirstDatePicker" />
-            <DatePicker Name="SecondDatePicker" />
-            <Button Name="ShowWorkloadButton" Content="Показать выработку" Click="ShowWorkloadButton_Click" />
-            <DataGrid Name="ResultDataGrid" />
-        </StackPanel>
+        <!-- Define two columns with proportional width -->
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="2*"/>
+            <ColumnDefinition Width="3*"/>
+        </Grid.ColumnDefinitions>
+
+        <!-- Left side with controls in a scrolling list -->
+        <ScrollViewer VerticalScrollBarVisibility="Auto">
+            <StackPanel Margin="10">
+                <TextBox Name="YearTextBox" Text="Введите год" GotFocus="TextBox_GotFocus" LostFocus="TextBox_LostFocus"/>
+                <Button Name="ShowYearButton" Content="Показать" Click="ShowYearButton_Click" Style="{StaticResource DemonstrationButtonWithMarginStyle}"/>
+                <TextBox Name="GenreTextBox" Text="Введите жанр" GotFocus="TextBox_GotFocus" LostFocus="TextBox_LostFocus" Margin="0,5,0,0"/>
+                <Button Name="ShowGenreButton" Content="Показать" Click="ShowGenreButton_Click" Style="{StaticResource DemonstrationButtonWithMarginStyle}"/>
+                <ComboBox Name="LibrarianComboBox" Margin="0,5,0,0"/>
+                <DatePicker Name="StartDatePicker" Margin="0,5,0,0"/>
+                <DatePicker Name="EndDatePicker" Margin="0,5,0,0"/>
+                <Button Name="ShowReadersButton" Content="Показать читателей" Click="ShowReadersButton_Click" Style="{StaticResource DemonstrationButtonWithMarginStyle}"/>
+                <DatePicker Name="FirstDatePicker" Margin="0,5,0,0"/>
+                <DatePicker Name="SecondDatePicker" Margin="0,5,0,0"/>
+                <Button Name="ShowWorkloadButton" Content="Показать выработку" Click="ShowWorkloadButton_Click" Style="{StaticResource DemonstrationButtonWithMarginStyle}"/>
+            </StackPanel>
+        </ScrollViewer>
+
+        <!-- Right side with DataGrid -->
+        <DataGrid Name="ResultDataGrid" Margin="10" Grid.Column="1"/>
     </Grid>
 </Window>
